@@ -1,0 +1,54 @@
+{
+  "name": "enxx-english-self-learning",
+  "version": "0.2.8-beta",
+  "private": true,
+  "description": "ENXX English Self-Learning / ENXX 英语自学网站 - an English self-learning website for zero-based learners.",
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0 -p 3000",
+    "build": "next build",
+    "start": "next start -H 127.0.0.1 -p ${PORT:-3000}",
+    "lint": "eslint . --max-warnings=0",
+    "test": "tsx --test tests/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "postinstall": "prisma generate",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "db:studio": "prisma studio",
+    "test:smtp": "tsx scripts/test-smtp.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "bcryptjs": "^3.0.3",
+    "cookie": "^1.1.1",
+    "framer-motion": "12.38.0",
+    "jsonwebtoken": "^9.0.3",
+    "next": "16.2.6",
+    "nodemailer": "^8.0.7",
+    "prisma": "^6.19.3",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "zod": "^4.4.3",
+    "zustand": "5.0.13"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^25.7.0",
+    "@types/nodemailer": "^8.0.0",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "autoprefixer": "10.5.0",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.2.6",
+    "postcss": "8.5.14",
+    "tailwindcss": "3.4.17",
+    "tsx": "^4.21.1",
+    "typescript": "5.9.3"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}

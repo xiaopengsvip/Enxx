@@ -1,0 +1,336 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+enum EmailCodeType {
+  REGISTER
+  LOGIN
+  PASSWORD_RESET
+  CHANGE_EMAIL
+}
+
+enum QuestionType {
+  CHOICE
+  FILL_BLANK
+  TRANSLATE_CN_TO_EN
+  TRANSLATE_EN_TO_CN
+  SENTENCE_ANALYSIS
+  SENTENCE_ORDER
+}
+
+enum LearningStatus {
+  NEW
+  LEARNING
+  MASTERED
+}
+
+enum ReviewType {
+  WORD
+  SENTENCE
+  PATTERN
+  SCENE
+  MISTAKE
+  NOTE
+}
+
+enum RelatedType {
+  WORD
+  SENTENCE
+  PATTERN
+  SCENE
+  QUESTION
+  GENERAL
+}
+
+model User {
+  id                     String                  @id @default(cuid())
+  username               String                  @unique
+  email                  String?                 @unique
+  passwordHash           String
+  role                   UserRole                @default(USER)
+  displayName            String?
+  avatar                 String?
+  level                  Int                     @default(0)
+  mustChangePassword     Boolean                 @default(false)
+  createdAt              DateTime                @default(now())
+  updatedAt              DateTime                @updatedAt
+  lastLoginAt            DateTime?
+  userWords              UserWord[]
+  userSentences          UserSentence[]
+  reviewItems            ReviewItem[]
+  mistakes               Mistake[]
+  notes                  Note[]
+  dailyStudyLogs         DailyStudyLog[]
+  passwordResetTokens    PasswordResetToken[]
+  emailVerificationCodes EmailVerificationCode[]
+  loginTickets           LoginTicket[]
+  emailLogs              EmailLog[]
+}
+
+model Word {
+  id             String     @id @default(cuid())
+  word           String
+  meaning        String
+  phonetic       String?
+  partOfSpeech   String
+  level          Int        @default(0)
+  category       String
+  example        String
+  exampleMeaning String
+  scene          String?
+  definitionEn   String?
+  collocations   Json?
+  phrases        Json?
+  forms          Json?
+  synonyms       Json?
+  antonyms       Json?
+  usageNotes     String?
+  commonMistake  String?
+  difficulty     String?
+  frequency      Int?
+  tags           Json?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  userWords      UserWord[]
+
+  @@index([word])
+  @@index([category])
+  @@index([level])
+}
+
+model SentencePattern {
+  id             String   @id @default(cuid())
+  name           String
+  formula        String
+  explanation    String
+  level          Int      @default(0)
+  examples       Json
+  breakdown      Json?
+  commonMistakes Json?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model Scene {
+  id          String   @id @default(cuid())
+  name        String
+  cnName      String
+  description String
+  level       Int      @default(0)
+  words       Json
+  sentences   Json
+  dialogues   Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model PracticeQuestion {
+  id          String       @id @default(cuid())
+  type        QuestionType
+  question    String
+  options     Json?
+  answer      String
+  explanation String?
+  level       Int          @default(0)
+  category    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model UserWord {
+  id             String         @id @default(cuid())
+  userId         String
+  wordId         String
+  status         LearningStatus @default(NEW)
+  masteryLevel   Int            @default(0)
+  favorite       Boolean        @default(false)
+  learnedAt      DateTime?
+  lastReviewedAt DateTime?
+  nextReviewAt   DateTime?
+  reviewCount    Int            @default(0)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  user           User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word           Word           @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, wordId])
+  @@index([userId])
+  @@index([wordId])
+}
+
+model UserSentence {
+  id          String   @id @default(cuid())
+  userId      String
+  sentence    String
+  translation String?
+  correction  String?
+  pattern     String?
+  aiFeedback  String?
+  createdAt   DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model ReviewItem {
+  id              String     @id @default(cuid())
+  userId          String
+  type            ReviewType
+  contentId       String?
+  contentSnapshot Json
+  masteryLevel    Int        @default(0)
+  reviewCount     Int        @default(0)
+  lastReviewedAt  DateTime?
+  nextReviewAt    DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([nextReviewAt])
+}
+
+model Mistake {
+  id            String   @id @default(cuid())
+  userId        String
+  questionId    String?
+  question      String
+  userAnswer    String?
+  correctAnswer String
+  explanation   String?
+  sourceType    String?
+  sourceId      String?
+  resolved      Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([resolved])
+}
+
+model Note {
+  id              String      @id @default(cuid())
+  userId          String
+  title           String
+  content         String
+  contentMarkdown String?
+  relatedType     RelatedType @default(GENERAL)
+  relatedId       String?
+  tags            Json?
+  pinned          Boolean     @default(false)
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([pinned])
+}
+
+model DailyStudyLog {
+  id                 String   @id @default(cuid())
+  userId             String
+  date               String
+  learnedWords       Int      @default(0)
+  practicedSentences Int      @default(0)
+  completedReviews   Int      @default(0)
+  testScore          Int?
+  studyMinutes       Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date])
+  @@index([date])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  tokenHash String
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
+  @@index([expiresAt])
+}
+
+model EmailVerificationCode {
+  id        String        @id @default(cuid())
+  email     String
+  userId    String?
+  type      EmailCodeType
+  codeHash  String
+  expiresAt DateTime
+  usedAt    DateTime?
+  attempts  Int           @default(0)
+  createdAt DateTime      @default(now())
+  ip        String?
+  userAgent String?
+  user      User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([email, type, createdAt])
+  @@index([userId])
+  @@index([codeHash])
+  @@index([expiresAt])
+}
+
+model LoginTicket {
+  id         String    @id @default(cuid())
+  userId     String
+  ticketHash String
+  expiresAt  DateTime
+  usedAt     DateTime?
+  createdAt  DateTime  @default(now())
+  ip         String?
+  userAgent  String?
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([ticketHash])
+  @@index([expiresAt])
+}
+
+model EmailLog {
+  id        String   @id @default(cuid())
+  to        String
+  subject   String
+  type      String
+  status    String
+  messageId String?
+  error     String?
+  userId    String?
+  createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@index([to])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+  @@index([userId])
+}
+
+model SystemSetting {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     String
+  encrypted Boolean  @default(false)
+  group     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([group])
+}
