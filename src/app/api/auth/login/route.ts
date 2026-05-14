@@ -4,6 +4,7 @@ import { authCookieOptions, AUTH_COOKIE_NAME, signToken } from "@/lib/auth";
 import { authErrorPayload, authSuccessPayload } from "@/lib/auth-response";
 import { createLoginTicket } from "@/lib/auth-ticket";
 import { createEmailVerificationCode, maskEmail } from "@/lib/email/code";
+import { recordLoginLog } from "@/lib/login-log";
 import { sendLoginVerificationEmail } from "@/lib/mail";
 import { verifyPassword } from "@/lib/password";
 import { loginSchema } from "@/lib/validators";
@@ -58,6 +59,7 @@ export async function POST(request: Request) {
       data: { lastLoginAt: new Date() },
       select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, level: true, mustChangePassword: true, createdAt: true, lastLoginAt: true },
     });
+    await recordLoginLog({ request, userId: user.id, source: "admin", status: "success" });
 
     const response = NextResponse.json({ ...authSuccessPayload(user), emailSecurityNotice: "管理员账号未绑定邮箱，建议尽快绑定以启用登录验证码。" });
     response.cookies.set(AUTH_COOKIE_NAME, signToken(user), authCookieOptions());

@@ -12,10 +12,12 @@ export async function GET(request: Request) {
     const status = url.searchParams.get("status") || undefined;
     const type = url.searchParams.get("type") || undefined;
     const keyword = url.searchParams.get("keyword") || undefined;
+    const provider = url.searchParams.get("provider") || undefined;
     const logs = await prisma.emailLog.findMany({
       where: {
         ...(status ? { status } : {}),
         ...(type ? { type } : {}),
+        ...(provider ? { providerKey: provider } : {}),
         ...(keyword ? { OR: [{ from: { contains: keyword, mode: "insensitive" as const } }, { to: { contains: keyword, mode: "insensitive" as const } }, { subject: { contains: keyword, mode: "insensitive" as const } }] } : {}),
       },
       orderBy: { createdAt: "desc" },

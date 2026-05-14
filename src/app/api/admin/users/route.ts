@@ -41,9 +41,9 @@ export async function GET(request: Request) {
       },
       orderBy: { createdAt: "desc" },
       take: 300,
-      select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, createdAt: true, updatedAt: true, lastLoginAt: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true },
+      select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, createdAt: true, updatedAt: true, lastLoginAt: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true, loginLogs: { orderBy: { createdAt: "desc" }, take: 1, select: { ip: true, country: true, region: true, city: true, device: true, browser: true, os: true, createdAt: true } } },
     });
-    return NextResponse.json({ ok: true, users: users.map(serializeUser) });
+    return NextResponse.json({ ok: true, users: users.map((user) => { const first = user.loginLogs[0]; return { ...serializeUser(user), loginLogs: undefined, recentLogin: first ? { ...first, location: [first.country, first.region, first.city].filter(Boolean).join(" / ") || "未知地区", createdAt: first.createdAt.toISOString() } : null }; }) });
   } catch (error) {
     return handleApiError(error);
   }
@@ -69,7 +69,7 @@ export async function POST(request: Request) {
         passwordHash: await hashPassword(data.initialPassword),
         mustChangePassword: true,
       },
-      select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, createdAt: true, updatedAt: true, lastLoginAt: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true },
+      select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, createdAt: true, updatedAt: true, lastLoginAt: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true, loginLogs: { orderBy: { createdAt: "desc" }, take: 1, select: { ip: true, country: true, region: true, city: true, device: true, browser: true, os: true, createdAt: true } } },
     });
     let emailNotice: "sent" | "skipped" | "failed" = "skipped";
     if (data.sendEmailNotify && user.email) {

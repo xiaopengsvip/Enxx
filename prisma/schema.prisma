@@ -80,6 +80,7 @@ model User {
   passwordResetTokens    PasswordResetToken[]
   emailVerificationCodes EmailVerificationCode[]
   loginTickets           LoginTicket[]
+  loginLogs              LoginLog[]
   emailLogs              EmailLog[]
 }
 
@@ -312,6 +313,7 @@ model LoginTicket {
 
 model EmailLog {
   id        String   @id @default(cuid())
+  providerKey String?
   from      String?
   to        String
   subject   String
@@ -324,10 +326,72 @@ model EmailLog {
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
   @@index([to])
+  @@index([providerKey])
   @@index([type])
   @@index([status])
   @@index([createdAt])
   @@index([userId])
+}
+
+model LoginLog {
+  id        String   @id @default(cuid())
+  userId    String
+  ip        String?
+  country   String?
+  region    String?
+  city      String?
+  timezone  String?
+  latitude  Float?
+  longitude Float?
+  userAgent String?
+  browser   String?
+  os        String?
+  device    String?
+  source    String?
+  status    String   @default("success")
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([ip])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model MailProviderConfig {
+  id                 String   @id @default(cuid())
+  key                String   @unique
+  name               String
+  type               String
+  enabled            Boolean  @default(false)
+  isDefault          Boolean  @default(false)
+  capability         String   @default("coming_soon")
+  status             String   @default("planned")
+  description        String?
+  host               String?
+  port               Int?
+  secure             Boolean?
+  username           String?
+  passwordEncrypted  String?
+  apiKeyEncrypted    String?
+  apiSecretEncrypted String?
+  domain             String?
+  region             String?
+  fromName           String?
+  fromAddress        String?
+  replyTo            String?
+  testTo             String?
+  logoUrl            String?
+  lastTestAt         DateTime?
+  lastTestStatus     String?
+  lastTestError      String?
+  lastMessageId      String?
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([isDefault])
+  @@index([enabled])
+  @@index([status])
 }
 
 model SystemSetting {

@@ -21,7 +21,7 @@ export async function GET(_request: Request, context: RouteContext) {
   try {
     await requireAdmin();
     const { id } = await context.params;
-    const [user, noteCount, mistakeCount, reviewCount, emailLogs] = await Promise.all([
+    const [user, noteCount, mistakeCount, reviewCount, emailLogs, loginLogs] = await Promise.all([
       prisma.user.findUnique({
         where: { id },
         select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true, createdAt: true, updatedAt: true, lastLoginAt: true },
@@ -29,7 +29,8 @@ export async function GET(_request: Request, context: RouteContext) {
       prisma.note.count({ where: { userId: id } }),
       prisma.mistake.count({ where: { userId: id } }),
       prisma.reviewItem.count({ where: { userId: id } }),
-      prisma.emailLog.findMany({ where: { userId: id }, orderBy: { createdAt: "desc" }, take: 10, select: { id: true, to: true, subject: true, type: true, status: true, messageId: true, error: true, createdAt: true } }),
+      prisma.emailLog.findMany({ where: { userId: id }, orderBy: { createdAt: "desc" }, take: 10, select: { id: true, providerKey: true, from: true, to: true, subject: true, type: true, status: true, messageId: true, error: true, createdAt: true } }),
+      prisma.loginLog.findMany({ where: { userId: id }, orderBy: { createdAt: "desc" }, take: 10, select: { id: true, ip: true, country: true, region: true, city: true, browser: true, os: true, device: true, source: true, status: true, createdAt: true } }),
     ]);
     if (!user) return NextResponse.json({ ok: false, message: "用户不存在" }, { status: 404 });
     return NextResponse.json({
@@ -37,6 +38,7 @@ export async function GET(_request: Request, context: RouteContext) {
       user: { ...user, createdAt: user.createdAt.toISOString(), updatedAt: user.updatedAt.toISOString(), lastLoginAt: iso(user.lastLoginAt), emailVerifiedAt: iso(user.emailVerifiedAt), avatarUpdatedAt: iso(user.avatarUpdatedAt) },
       stats: { noteCount, mistakeCount, reviewCount },
       emailLogs: emailLogs.map((log) => ({ ...log, createdAt: log.createdAt.toISOString() })),
+      loginLogs: loginLogs.map((log) => ({ ...log, location: [log.country, log.region, log.city].filter(Boolean).join(" / ") || "未知地区", createdAt: log.createdAt.toISOString() })),
     });
   } catch (error) {
     return handleApiError(error);

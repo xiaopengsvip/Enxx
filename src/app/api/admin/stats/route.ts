@@ -6,6 +6,7 @@ import { todayKey } from "@/lib/date";
 import { grammarLessons } from "@/data/grammar";
 import { siteConfig } from "@/config/site";
 import { getPublicMailConfig } from "@/lib/mail-config";
+import { getActiveMailProvider, toPublicProvider } from "@/lib/mail-provider";
 
 export async function GET() {
   try {
@@ -64,6 +65,7 @@ export async function GET() {
       prisma.note.findMany({ orderBy: { createdAt: "desc" }, take: 3, select: { id: true, title: true, createdAt: true, user: { select: { username: true, displayName: true } } } }),
     ]);
     const mail = await getPublicMailConfig().catch(() => null);
+    const activeProvider = await getActiveMailProvider().then(toPublicProvider).catch(() => null);
     const completeBase = wordCount * 5;
     const missingTotal = missingPhonetic + missingDefinitionEn + missingExample + missingPhrases + missingForms;
     const completeness = completeBase > 0 ? Math.max(0, Math.round(((completeBase - missingTotal) / completeBase) * 100)) : 0;
@@ -98,6 +100,7 @@ export async function GET() {
       smtpConfigured: Boolean(mail?.configured),
       smtpSource: mail?.source ?? "none",
       smtp: mail,
+      mailProvider: activeProvider,
       version: siteConfig.version,
       contentHealth: { completeness, missingPhonetic, missingDefinitionEn, missingExample, missingPhrases, missingForms, grammarCount: grammarLessons.length, sceneCount, questionCount },
       recentActivity,

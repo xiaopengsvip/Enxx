@@ -16,6 +16,7 @@ test("all required ENXX email templates render html and text without scripts", (
   const keys = emailTemplateCatalog.map((template) => template.key).sort();
   assert.deepEqual(keys, [
     "admin_created_user",
+    "change_email_verification",
     "login_verification",
     "notification",
     "password_reset",

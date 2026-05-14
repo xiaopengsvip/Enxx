@@ -8,16 +8,16 @@ import { cn } from "@/lib/utils";
 
 type AdminUser = { username: string; displayName?: string | null; avatar?: string | null; role: "ADMIN" | "USER" };
 
-type NavItem = { href: string; label: string; icon: string; description?: string };
+type NavItem = { href: string; label: string; icon: string; description?: string; status?: "Beta" | "开发中" | "规划中" | "维护中" };
 type NavGroup = { title: string; items: NavItem[] };
 
 const navGroups: NavGroup[] = [
-  { title: "概览", items: [{ href: "/admin", label: "后台首页", icon: "⌂" }, { href: "/admin/system", label: "系统状态", icon: "◇" }] },
-  { title: "用户管理", items: [{ href: "/admin/users", label: "用户列表", icon: "U" }, { href: "/admin/users/create", label: "新增用户", icon: "+" }, { href: "/admin/security", label: "账号安全", icon: "盾" }] },
-  { title: "内容管理", items: [{ href: "/admin/words", label: "单词词库", icon: "W" }, { href: "/admin/dictionary", label: "字典词库", icon: "D" }, { href: "/admin/patterns", label: "句型管理", icon: "P" }, { href: "/admin/grammar", label: "语法内容", icon: "G" }, { href: "/admin/scenes", label: "场景管理", icon: "S" }, { href: "/admin/questions", label: "题库管理", icon: "Q" }] },
-  { title: "邮件中心", items: [{ href: "/admin/settings/email", label: "邮件配置", icon: "@" }, { href: "/admin/emails/send", label: "发送邮件", icon: "✉" }, { href: "/admin/emails/templates", label: "邮件模板", icon: "T" }, { href: "/admin/email-logs", label: "邮件日志", icon: "L" }] },
-  { title: "学习数据", items: [{ href: "/admin/study-logs", label: "学习日志", icon: "↗" }, { href: "/admin/notes", label: "笔记数据", icon: "N" }, { href: "/admin/mistakes", label: "错题数据", icon: "M" }, { href: "/admin/reviews", label: "复习数据", icon: "R" }] },
-  { title: "系统设置", items: [{ href: "/admin/settings", label: "基础设置", icon: "⚙" }, { href: "/admin/settings/email", label: "邮件设置", icon: "@" }, { href: "/admin/settings/security", label: "安全设置", icon: "锁" }, { href: "/admin/tools", label: "测试工具", icon: "✓" }] },
+  { title: "概览", items: [{ href: "/admin", label: "后台首页", icon: "⌂" }, { href: "/admin/system", label: "系统状态", icon: "◇", status: "Beta" }] },
+  { title: "用户管理", items: [{ href: "/admin/users", label: "用户列表", icon: "U" }, { href: "/admin/users/create", label: "新增用户", icon: "+" }, { href: "/admin/security", label: "账号安全", icon: "盾", status: "Beta" }, { href: "/admin/login-logs", label: "登录记录", icon: "IP" }] },
+  { title: "内容管理", items: [{ href: "/admin/words", label: "单词词库", icon: "W", status: "Beta" }, { href: "/admin/dictionary", label: "字典词库", icon: "D" }, { href: "/admin/patterns", label: "句型管理", icon: "P", status: "Beta" }, { href: "/admin/grammar", label: "语法内容", icon: "G", status: "Beta" }, { href: "/admin/scenes", label: "场景管理", icon: "S", status: "Beta" }, { href: "/admin/questions", label: "题库管理", icon: "Q", status: "Beta" }] },
+  { title: "邮件中心", items: [{ href: "/admin/settings/mail-providers", label: "邮件通道", icon: "@" }, { href: "/admin/settings/email", label: "邮件配置", icon: "SMTP" }, { href: "/admin/emails/send", label: "发送邮件", icon: "✉" }, { href: "/admin/emails/templates", label: "邮件模板", icon: "T" }, { href: "/admin/email-logs", label: "邮件日志", icon: "L" }] },
+  { title: "学习数据", items: [{ href: "/admin/study-logs", label: "学习日志", icon: "↗", status: "Beta" }, { href: "/admin/notes", label: "笔记数据", icon: "N", status: "Beta" }, { href: "/admin/mistakes", label: "错题数据", icon: "M", status: "Beta" }, { href: "/admin/reviews", label: "复习数据", icon: "R", status: "Beta" }] },
+  { title: "系统设置", items: [{ href: "/admin/settings", label: "基础设置", icon: "⚙", status: "规划中" }, { href: "/admin/settings/security", label: "安全设置", icon: "锁", status: "规划中" }, { href: "/admin/tools", label: "测试工具", icon: "✓", status: "Beta" }] },
 ];
 
 const pageMeta: Record<string, { title: string; description: string }> = {
@@ -25,6 +25,7 @@ const pageMeta: Record<string, { title: string; description: string }> = {
   "/admin/users": { title: "用户管理", description: "查看用户资料、头像、角色、等级、登录状态并执行账号管理操作。" },
   "/admin/users/create": { title: "新增用户", description: "后台创建账号，可发送账号通知邮件并强制首次修改密码。" },
   "/admin/dictionary": { title: "字典词库", description: "搜索、筛选、维护词条并查看词条内容完整度。" },
+  "/admin/settings/mail-providers": { title: "邮件通道", description: "管理 QQ SMTP、自建 SMTP、Google SMTP 和第三方 Provider。" },
   "/admin/settings/email": { title: "邮件配置", description: "配置 SMTP、默认测试收件邮箱和 ENXX 邮件 Logo。" },
   "/admin/emails/send": { title: "发送邮件", description: "给单个、多选、角色或全部用户发送系统通知。" },
   "/admin/emails/templates": { title: "邮件模板", description: "预览注册、登录、重置密码、欢迎和系统通知模板。" },
@@ -120,7 +121,8 @@ function AdminSidebar({ pathname, onNavigate }: { pathname: string; onNavigate: 
                   )}
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-sky-100 text-xs text-sky-700 dark:bg-sky-400/15 dark:text-sky-100">{item.icon}</span>
-                  <span>{item.label}</span>
+                  <span className="min-w-0 flex-1">{item.label}</span>
+                  {item.status ? <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[10px] font-black text-slate-500 dark:bg-white/10 dark:text-slate-300">{item.status}</span> : null}
                 </Link>
               );
             })}

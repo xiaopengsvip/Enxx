@@ -1,6 +1,6 @@
 {
   "name": "enxx-english-self-learning",
-  "version": "0.3.0-beta",
+  "version": "0.3.2-beta",
   "private": true,
   "description": "ENXX English Self-Learning / ENXX 英语自学网站 - an English self-learning website for zero-based learners.",
   "scripts": {
@@ -16,7 +16,9 @@
     "db:deploy": "prisma migrate deploy",
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
-    "test:smtp": "tsx scripts/test-smtp.ts"
+    "test:smtp": "tsx scripts/test-smtp.ts",
+    "test:mail": "tsx scripts/test-mail-provider.ts",
+    "check:mail-dns": "tsx scripts/check-mail-dns.ts"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
@@ -30,6 +32,7 @@
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "sharp": "^0.34.5",
+    "ua-parser-js": "^2.0.9",
     "zod": "^4.4.3",
     "zustand": "5.0.13"
   },
@@ -41,6 +44,7 @@
     "@types/nodemailer": "^8.0.0",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
+    "@types/ua-parser-js": "^0.7.39",
     "autoprefixer": "10.5.0",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",

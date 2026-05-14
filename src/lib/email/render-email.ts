@@ -1,4 +1,5 @@
 import { renderAdminCreatedUserEmail } from "./templates/admin-created-user";
+import { renderChangeEmailVerificationEmail } from "./templates/change-email-verification";
 import { renderLoginVerificationEmail } from "./templates/login-verification";
 import { renderNotificationEmail } from "./templates/notification";
 import { renderPasswordResetEmail } from "./templates/password-reset";
@@ -10,6 +11,7 @@ export type EmailTemplateKey =
   | "register_verification"
   | "login_verification"
   | "password_reset"
+  | "change_email_verification"
   | "welcome"
   | "notification"
   | "admin_created_user";
@@ -20,6 +22,7 @@ export const emailTemplateCatalog: Array<{ key: EmailTemplateKey; name: string; 
   { key: "register_verification", name: "注册验证码", description: "用户注册前发送 6 位邮箱验证码。" },
   { key: "login_verification", name: "登录验证码", description: "账号密码正确后发送二次登录验证码。" },
   { key: "password_reset", name: "重置密码", description: "找回密码链接邮件，30 分钟内有效。" },
+  { key: "change_email_verification", name: "更换绑定邮箱", description: "用户更换绑定邮箱时发送到新邮箱的验证码。" },
   { key: "welcome", name: "欢迎邮件", description: "注册成功后发送学习引导。" },
   { key: "notification", name: "系统通知", description: "管理员后台发送站内/邮件通知。" },
   { key: "admin_created_user", name: "管理员创建账号", description: "管理员创建用户后发送账号和初始密码。" },
@@ -33,7 +36,9 @@ export function renderEmailTemplate(key: EmailTemplateKey | string, data: Record
     case "login_verification":
       return renderLoginVerificationEmail({ code: data.code ?? "123456", logoUrl });
     case "password_reset":
-      return renderPasswordResetEmail({ resetUrl: data.resetUrl ?? "https://enxx.allapple.top/reset-password?token=preview-token", logoUrl });
+      return renderPasswordResetEmail({ resetUrl: data.resetUrl ?? "https://enxx.allapple.top/reset-password?token=preview", logoUrl });
+    case "change_email_verification":
+      return renderChangeEmailVerificationEmail({ code: data.code ?? "123456", logoUrl });
     case "welcome":
       return renderWelcomeEmail({ username: data.username ?? "learner", startUrl: data.startUrl, logoUrl });
     case "notification":

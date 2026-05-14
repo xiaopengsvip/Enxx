@@ -3,6 +3,7 @@ import { authCookieOptions, AUTH_COOKIE_NAME, signToken } from "@/lib/auth";
 import { authErrorPayload, authSuccessPayload } from "@/lib/auth-response";
 import { consumeLoginTicket, getValidLoginTicket } from "@/lib/auth-ticket";
 import { validateEmailVerificationCode } from "@/lib/email/code";
+import { recordLoginLog } from "@/lib/login-log";
 import { prisma, isDatabaseConfigured } from "@/lib/prisma";
 import { loginVerifyCodeSchema } from "@/lib/validators";
 
@@ -24,6 +25,7 @@ export async function POST(request: Request) {
       data: { lastLoginAt: new Date() },
       select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, level: true, mustChangePassword: true, createdAt: true, lastLoginAt: true },
     });
+    await recordLoginLog({ request, userId: user.id, source: "email_code", status: "success" });
     const response = NextResponse.json(authSuccessPayload(user));
     response.cookies.set(AUTH_COOKIE_NAME, signToken(user), authCookieOptions());
     return response;

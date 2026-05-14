@@ -7,6 +7,19 @@ import { seedQuestions } from "../src/data/seed/questions";
 
 const prisma = new PrismaClient();
 
+const mailProviderSeeds = [
+  { key: "qq_smtp", name: "QQ SMTP", type: "smtp", enabled: true, isDefault: true, capability: "production_ready", status: "healthy", host: "smtp.qq.com", port: 465, secure: true, fromName: "ENXX", fromAddress: "", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "当前生产可用邮件通道，使用 QQ SMTP 发信。" },
+  { key: "custom_smtp", name: "自建 SMTP", type: "smtp", enabled: false, isDefault: false, capability: "test_only", status: "unconfigured", host: "", port: 587, secure: false, fromName: "ENXX", fromAddress: "enxx@enxx.allapple.top", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "自建 SMTP 测试通道。测试通过前不要设为默认。" },
+  { key: "google_smtp", name: "Google SMTP", type: "smtp", enabled: false, isDefault: false, capability: "test_only", status: "unconfigured", host: "smtp.gmail.com", port: 587, secure: false, fromName: "ENXX", fromAddress: "", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "Google/Gmail/Workspace SMTP 通道。需要使用授权码或对应 SMTP 凭据，测试通过后才可启用。" },
+  { key: "resend", name: "Resend", type: "resend", enabled: false, isDefault: false, capability: "coming_soon", status: "developing", domain: "enxx.allapple.top", fromName: "ENXX", fromAddress: "enxx@enxx.allapple.top", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "支持自定义发信域的开发者邮件服务商，后续接入。" },
+  { key: "brevo", name: "Brevo", type: "brevo", enabled: false, isDefault: false, capability: "coming_soon", status: "developing", fromName: "ENXX", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "主流事务邮件/营销邮件服务商，后续接入。" },
+  { key: "mailgun", name: "Mailgun", type: "mailgun", enabled: false, isDefault: false, capability: "coming_soon", status: "developing", domain: "enxx.allapple.top", fromName: "ENXX", fromAddress: "enxx@enxx.allapple.top", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "主流邮件 API 服务商，后续接入。" },
+  { key: "amazon_ses", name: "Amazon SES", type: "amazon_ses", enabled: false, isDefault: false, capability: "coming_soon", status: "developing", domain: "enxx.allapple.top", fromName: "ENXX", fromAddress: "enxx@enxx.allapple.top", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "低成本正式发信通道，后续接入。" },
+  { key: "sendgrid", name: "SendGrid", type: "sendgrid", enabled: false, isDefault: false, capability: "coming_soon", status: "planned", fromName: "ENXX", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "主流邮件 API 服务商，规划中。" },
+  { key: "postmark", name: "Postmark", type: "postmark", enabled: false, isDefault: false, capability: "coming_soon", status: "planned", fromName: "ENXX", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "高送达事务邮件服务商，规划中。" },
+  { key: "mock", name: "Mock Mail", type: "mock", enabled: process.env.NODE_ENV !== "production", isDefault: false, capability: "test_only", status: "healthy", fromName: "ENXX", fromAddress: "mock@enxx.local", replyTo: "test@allapple.top", testTo: "test@allapple.top", description: "开发环境模拟邮件通道。" },
+] as const;
+
 const commonDictionary: Record<string, Partial<Prisma.WordCreateInput>> = {
   i: { definitionEn: "the speaker or writer", synonyms: ["me"], antonyms: [], forms: { subject: "I", object: "me", possessive: "my" }, phrases: ["I am", "I can", "I want to"], usageNotes: "I 永远大写，用来表达自己。", difficulty: "easy", frequency: 10 },
   you: { definitionEn: "the person or people being spoken to", synonyms: [], antonyms: [], forms: { subject: "you", object: "you", possessive: "your" }, phrases: ["you are", "you can", "thank you"], usageNotes: "you 可以表示你，也可以表示你们。", difficulty: "easy", frequency: 10 },
@@ -65,6 +78,33 @@ async function main() {
       await prisma.user.update({ where: { id: existingAdmin.id }, data: updateData });
     }
     console.log("Default admin account already exists.");
+  }
+
+
+  for (const provider of mailProviderSeeds) {
+    await prisma.mailProviderConfig.upsert({
+      where: { key: provider.key },
+      update: {
+        name: provider.name,
+        type: provider.type,
+        capability: provider.capability,
+        description: provider.description,
+        host: "host" in provider ? provider.host : undefined,
+        port: "port" in provider ? provider.port : undefined,
+        secure: "secure" in provider ? provider.secure : undefined,
+        domain: "domain" in provider ? provider.domain : undefined,
+        fromName: provider.fromName,
+        fromAddress: "fromAddress" in provider ? provider.fromAddress : undefined,
+        replyTo: provider.replyTo,
+        testTo: provider.testTo,
+      },
+      create: provider,
+    });
+  }
+  const defaultProviders = await prisma.mailProviderConfig.findMany({ where: { isDefault: true }, select: { key: true } });
+  if (!defaultProviders.some((provider) => provider.key === "qq_smtp")) {
+    await prisma.mailProviderConfig.updateMany({ data: { isDefault: false } });
+    await prisma.mailProviderConfig.update({ where: { key: "qq_smtp" }, data: { isDefault: true, enabled: true, status: "healthy" } });
   }
 
   for (const word of seedWords) {

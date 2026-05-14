@@ -216,9 +216,19 @@ async function getSystemSetting(key: MailSettingKey): Promise<string | null> {
   }
 }
 
-export async function getTestEmailRecipient(inputTo?: string | null): Promise<string> {
+export async function getTestEmailRecipient(inputTo?: string | null, providerKey?: string | null): Promise<string> {
   const explicitTo = clean(inputTo);
   if (isValidEmail(explicitTo)) return explicitTo;
+
+  const cleanProviderKey = clean(providerKey);
+  if (cleanProviderKey && isDatabaseConfigured()) {
+    try {
+      const provider = await prisma.mailProviderConfig.findUnique({ where: { key: cleanProviderKey }, select: { testTo: true } });
+      if (isValidEmail(provider?.testTo)) return clean(provider?.testTo);
+    } catch {
+      // Provider lookup must never break test recipient fallback.
+    }
+  }
 
   const dbTo = await getSystemSetting("SMTP_TEST_TO");
   if (isValidEmail(dbTo)) return clean(dbTo);
@@ -298,12 +308,29 @@ async function resolveEmailReplyTo(inputReplyTo: string | null | undefined, data
   return DEFAULT_TEST_EMAIL_RECIPIENT;
 }
 
-export async function getMailFromConfig(inputFrom?: string | null, inputReplyTo?: string | null): Promise<MailFromConfig> {
+export async function getMailFromConfig(inputFrom?: string | null, inputReplyTo?: string | null, providerKey?: string | null): Promise<MailFromConfig> {
   const envValues = getEnvMailSettingValues();
   const databaseValues = await getDatabaseMailSettingValues();
   const databaseConfig = databaseValues ? buildMailConfig(databaseValues, "database") : null;
   const envConfig = buildMailConfig(envValues, "env");
   const smtpConfig = databaseConfig ?? envConfig;
+
+  const cleanProviderKey = clean(providerKey);
+  let providerFrom: Omit<MailFromConfig, "replyTo" | "sendingDomain"> | null = null;
+  let providerReplyTo: string | null = null;
+  if (cleanProviderKey && isDatabaseConfigured()) {
+    try {
+      const provider = await prisma.mailProviderConfig.findUnique({ where: { key: cleanProviderKey }, select: { fromName: true, fromAddress: true, replyTo: true } });
+      if (isValidEmail(provider?.fromAddress)) {
+        const fromName = cleanHeaderText(provider?.fromName) || DEFAULT_EMAIL_FROM_NAME;
+        const fromAddress = clean(provider?.fromAddress);
+        providerFrom = { from: formatMailFrom(fromName, fromAddress), source: "database", fromName, fromAddress };
+      }
+      if (isValidEmail(provider?.replyTo)) providerReplyTo = clean(provider?.replyTo);
+    } catch {
+      providerFrom = null;
+    }
+  }
 
   const explicitFrom = clean(inputFrom);
   const configured = isValidMailbox(explicitFrom)
@@ -313,12 +340,12 @@ export async function getMailFromConfig(inputFrom?: string | null, inputReplyTo?
         fromName: DEFAULT_EMAIL_FROM_NAME,
         fromAddress: extractEmailAddress(explicitFrom),
       }
-    : await resolveConfiguredFrom(databaseValues, envValues, smtpConfig);
+    : providerFrom ?? await resolveConfiguredFrom(databaseValues, envValues, smtpConfig);
 
   const sendingDomain = normalizeSendingDomain(databaseValues?.EMAIL_SENDING_DOMAIN ?? envValues.EMAIL_SENDING_DOMAIN);
   return {
     ...configured,
-    replyTo: await resolveEmailReplyTo(inputReplyTo, databaseValues),
+    replyTo: clean(inputReplyTo) ? await resolveEmailReplyTo(inputReplyTo, databaseValues) : providerReplyTo ?? await resolveEmailReplyTo(inputReplyTo, databaseValues),
     sendingDomain,
   };
 }

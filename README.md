@@ -16,7 +16,7 @@ ENXX 不只是背单词，而是通过：查词、听发音、学句型、拆句
 
 ## 当前版本
 
-- Version: `0.3.0-beta`
+- Version: `0.3.2-beta`
 - Updated: `2026-05-15`
 - Developer: Everett / AI SYSTEMS
 - Developer Site: https://allapple.top/
@@ -425,3 +425,32 @@ AI_MODEL=gpt-4o-mini
 - Store：`src/store/learning-store.ts`
 - localStorage key：`enxx-learning-progress-v1`
 - 主题 key：`enxx-theme`
+
+
+## 0.3.2-beta 后台、登录安全与邮件通道
+
+后台功能：用户管理、登录记录、邮件中心、邮件通道、内容管理、学习数据、系统设置。后台路径包括 `/admin/settings/mail-providers` 邮件通道、`/admin/settings/email` 邮件基础设置、`/admin/email-logs` 邮件日志、`/admin/login-logs` 登录记录。侧边栏入口不能 404；未完成功能必须显示开发中、规划中或维护中状态。
+
+登录安全：系统在登录成功后记录 LoginLog，包括登录 IP、地区、设备、浏览器、系统、来源和状态。管理员可在后台查看所有用户登录记录，后台用户详情显示最近 10 条登录历史；普通用户可在 `/account` 和 `/account/security` 查看自己的最近登录记录。
+
+邮箱绑定：用户更换邮箱必须通过新邮箱验证码。验证码 10 分钟有效，60 秒内不能重复发送，`/account/profile` 不允许直接 PATCH 修改 email。
+
+头像上传：支持 jpg、jpeg、png、webp，最大 2MB，保存到 `/uploads/avatars`，服务器转换为 256x256 webp。上传成功后 `/api/auth/me` 与顶部用户菜单同步头像和 displayName。
+
+邮件通道架构：所有业务邮件统一走 `sendMail`。当前默认通道是 QQ SMTP；`custom_smtp` 是自建 SMTP 测试通道；`google_smtp` 是 Google/Gmail/Workspace 可配置通道；Resend、Brevo、Mailgun、Amazon SES、SendGrid、Postmark 为预留通道。只有已启用、测试健康且不是开发中/规划中/维护中的通道才允许设为默认；测试通道设为默认需要管理员显式确认。
+
+默认测试收件邮箱：`test@allapple.top`。`lianxingtz@qq.com` 只作为 QQ SMTP 发件账号，不作为默认测试收件邮箱。`enxx@enxx.allapple.top` 需要通过 `custom_smtp` 或第三方自定义域 Provider 正式发信，不要在 QQ SMTP 下设为默认 From。
+
+Cloudflare Email Routing 保护：Cloudflare Email Routing 负责 `allapple.top` 收信转发；不要修改 `allapple.top` 主域 MX。自建发信使用 `enxx.allapple.top` 子域，只配置 SPF、DKIM、DMARC、PTR 和 IP 信誉相关记录；Google SMTP、custom_smtp、第三方服务商都不能修改 Cloudflare Email Routing。自建 SMTP 测试失败不会影响当前 QQ SMTP fallback。
+
+测试命令：
+
+```bash
+npm run test:mail -- --provider=qq_smtp
+npm run test:mail -- --provider=custom_smtp
+npm run test:mail -- --provider=google_smtp
+npm run test:mail -- --provider=custom_smtp --from=enxx@enxx.allapple.top --to=test@allapple.top
+npm run check:mail-dns -- --domain=enxx.allapple.top
+```
+
+通道状态说明：可用、未配置、测试失败、开发中、维护中、规划中。

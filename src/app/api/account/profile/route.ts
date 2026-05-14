@@ -8,15 +8,10 @@ export const runtime = "nodejs";
 
 const profileSchema = z.object({
   displayName: z.string().trim().max(50, "显示名称最多 50 字").optional().default(""),
-  email: z.string().trim().optional().default(""),
   bio: z.string().trim().max(200, "个人简介最多 200 字").optional().default(""),
   learningGoal: z.string().trim().max(200, "学习目标最多 200 字").optional().default(""),
   timezone: z.string().trim().max(80).optional().default(""),
   locale: z.string().trim().max(20).optional().default(""),
-}).superRefine((data, ctx) => {
-  if (data.email && !z.string().email().safeParse(data.email).success) {
-    ctx.addIssue({ code: "custom", path: ["email"], message: "请输入正确的邮箱地址" });
-  }
 });
 
 export async function GET() {
@@ -36,22 +31,14 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ ok: false, message: parsed.error.issues[0]?.message ?? "资料参数错误" }, { status: 400 });
     }
     const data = parsed.data;
-    const nextEmail = data.email ? data.email.toLowerCase() : null;
-    if (nextEmail && nextEmail !== current.email) {
-      const exists = await prisma.user.findFirst({ where: { email: nextEmail, NOT: { id: current.id } }, select: { id: true } });
-      if (exists) return NextResponse.json({ ok: false, message: "邮箱已被其他账号使用" }, { status: 409 });
-    }
-
     const user = await prisma.user.update({
       where: { id: current.id },
       data: {
         displayName: data.displayName || null,
-        email: nextEmail,
         bio: data.bio || null,
         learningGoal: data.learningGoal || null,
         timezone: data.timezone || null,
         locale: data.locale || null,
-        ...(nextEmail !== current.email ? { emailVerifiedAt: null } : {}),
       },
       select: {
         id: true,

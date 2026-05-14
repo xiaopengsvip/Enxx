@@ -23,7 +23,7 @@ src/config/site.ts
 Current version:
 
 ```text
-0.3.0-beta
+0.3.2-beta
 ```
 
 Updated:
@@ -283,3 +283,36 @@ npm run db:seed
 ```
 
 The seed script creates the default admin from `ADMIN_USERNAME` / `ADMIN_INITIAL_PASSWORD` and marks `mustChangePassword=true`. Do not remove the localStorage fallback: logged-out users should still be able to learn, and protected API routes should return JSON 401/403 instead of unhandled 500 errors.
+
+
+## 0.3.2-beta Admin / LoginLog / Mail Provider rules
+
+1. 后台侧边栏入口不能 404。
+2. 未完成功能必须标识开发中/规划中/维护中。
+3. 登录成功必须记录 LoginLog。
+4. LoginLog 记录 IP、地区、设备、浏览器、系统。
+5. IP 地区识别失败不能影响登录。
+6. 用户更换邮箱必须走 CHANGE_EMAIL 验证码。
+7. /account/profile 不允许直接 PATCH 修改 email。
+8. 用户头像上传必须限制类型和大小。
+9. 顶部用户菜单必须同步头像和 displayName。
+10. 后台用户详情必须显示最近登录记录。
+11. 普通用户只能查看自己的登录记录。
+12. 管理员可以查看所有登录记录。
+13. QQ SMTP 是当前稳定 Provider，不要破坏。
+14. custom_smtp 是自建测试通道，测试成功前不得设为默认。
+15. google_smtp 是可配置通道，测试成功前不得设为默认。
+16. Resend/Brevo/Mailgun/SES/SendGrid/Postmark 未真实接入前必须显示开发中或规划中。
+17. Provider 扩展必须通过 MailProviderConfig。
+18. 所有业务邮件必须走 sendMail。
+19. 不允许业务 API 直接调用 nodemailer。
+20. test@allapple.top 是默认测试收件邮箱。
+21. lianxingtz@qq.com 只作为 QQ SMTP 发件账号。
+22. enxx@enxx.allapple.top 只能通过 custom_smtp 或自定义域 Provider 正式发信。
+23. 不修改 allapple.top 主域 MX。
+24. 自建 SMTP 需要 DNS 与 IP 信誉检查。
+25. 邮件日志不得记录敏感信息。
+26. 切换默认 Provider 前必须测试成功。
+27. 未验证通道不能开放为默认发信通道。
+28. 维护中/开发中/规划中的通道不能设为默认。
+29. 所有 Provider 测试默认收件人必须是 test@allapple.top。

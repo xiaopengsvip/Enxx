@@ -7,12 +7,12 @@ function read(path: string) {
   return readFileSync(path, "utf8");
 }
 
-test("0.3.0-beta version and documentation are synchronized", () => {
+test("0.3.2-beta version and documentation are synchronized", () => {
   for (const file of ["src/config/site.ts", "package.json", "README.md", "AGENTS.md", "CHANGELOG.md"]) {
-    assert.ok(read(file).includes("0.3.0-beta"), `${file} should mention 0.3.0-beta`);
+    assert.ok(read(file).includes("0.3.2-beta"), `${file} should mention 0.3.2-beta`);
   }
   assert.ok(read("src/config/site.ts").includes('updatedAt: "2026-05-15"'));
-  assert.ok(read("CHANGELOG.md").includes("## 0.3.0-beta - 2026-05-15"));
+  assert.ok(read("CHANGELOG.md").includes("## 0.3.2-beta - 2026-05-15"));
 });
 
 test("admin console uses its own route group and is not wrapped by normal AppShell", () => {
@@ -45,7 +45,7 @@ test("account center supports role-specific UI, profile editing and avatar uploa
   }
   assert.ok(profile.includes("AvatarUploader"));
   assert.ok(profileApi.includes("requireUser"));
-  assert.ok(profileApi.includes("emailVerifiedAt: null"));
+  assert.equal(profileApi.includes("email: nextEmail"), false);
   assert.ok(avatarApi.includes("requireUser"));
   assert.ok(avatarApi.includes("image/jpeg"));
   assert.ok(avatarApi.includes("image/png"));

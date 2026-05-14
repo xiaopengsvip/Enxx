@@ -1,5 +1,32 @@
 # Changelog
 
+## 0.3.2-beta - 2026-05-15
+
+- 规范化升级后台 Admin Console 页面结构
+- 规范后台侧边栏导航与所有功能入口状态
+- 新增用户登录记录 LoginLog
+- 登录时记录 IP、IP 地区、设备、浏览器和系统信息
+- 后台用户详情支持查看登录历史
+- 我的账号页面显示最近登录 IP、地区和设备
+- 新增更换绑定邮箱验证码流程
+- 用户头像上传流程做通并同步顶部用户菜单
+- 后台用户管理与账号中心资料联动
+- 新增多邮件通道 Provider 管理架构
+- 保持 QQ SMTP 为当前稳定默认邮件通道
+- 新增自建 SMTP 测试通道 custom_smtp
+- 新增 Google SMTP 测试通道 google_smtp
+- 新增 Resend、Brevo、Mailgun、Amazon SES、SendGrid、Postmark 通道预留
+- 后台新增邮件通道管理页面
+- 支持按通道单独配置、测试、查看状态
+- 已验证通道才允许设为默认
+- 未验证或未接入通道显示开发中/维护中/规划中
+- EmailLog 增加 providerKey、from、to 记录
+- 新增 test:mail 邮件通道测试脚本
+- 新增 check:mail-dns DNS 检查脚本
+- 保持 test@allapple.top 为默认测试收件邮箱
+- 明确 lianxingtz@qq.com 仅作为 QQ SMTP 发件账号
+- 保持 Cloudflare Email Routing 不受影响
+
 ## 0.3.0-beta - 2026-05-15
 
 - 全新升级后台控制台 UI
