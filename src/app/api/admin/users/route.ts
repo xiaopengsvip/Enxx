@@ -17,15 +17,33 @@ const createUserSchema = z.object({
   sendEmailNotify: z.boolean().optional().default(true),
 });
 
-export async function GET() {
+function serializeUser<T extends { createdAt: Date; updatedAt?: Date; lastLoginAt: Date | null; emailVerifiedAt?: Date | null; avatarUpdatedAt?: Date | null }>(user: T) {
+  return {
+    ...user,
+    createdAt: user.createdAt.toISOString(),
+    updatedAt: user.updatedAt ? user.updatedAt.toISOString() : undefined,
+    lastLoginAt: user.lastLoginAt?.toISOString() ?? null,
+    emailVerifiedAt: user.emailVerifiedAt?.toISOString() ?? null,
+    avatarUpdatedAt: user.avatarUpdatedAt?.toISOString() ?? null,
+  };
+}
+
+export async function GET(request: Request) {
   try {
     await requireAdmin();
+    const { searchParams } = new URL(request.url);
+    const keyword = searchParams.get("keyword")?.trim();
+    const role = searchParams.get("role")?.trim();
     const users = await prisma.user.findMany({
+      where: {
+        ...(role === "ADMIN" || role === "USER" ? { role } : {}),
+        ...(keyword ? { OR: [{ username: { contains: keyword, mode: "insensitive" } }, { email: { contains: keyword, mode: "insensitive" } }, { displayName: { contains: keyword, mode: "insensitive" } }] } : {}),
+      },
       orderBy: { createdAt: "desc" },
-      take: 200,
-      select: { id: true, username: true, email: true, role: true, displayName: true, createdAt: true, lastLoginAt: true, mustChangePassword: true },
+      take: 300,
+      select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, createdAt: true, updatedAt: true, lastLoginAt: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true },
     });
-    return NextResponse.json({ ok: true, users: users.map((user) => ({ ...user, createdAt: user.createdAt.toISOString(), lastLoginAt: user.lastLoginAt?.toISOString() ?? null })) });
+    return NextResponse.json({ ok: true, users: users.map(serializeUser) });
   } catch (error) {
     return handleApiError(error);
   }
@@ -51,14 +69,14 @@ export async function POST(request: Request) {
         passwordHash: await hashPassword(data.initialPassword),
         mustChangePassword: true,
       },
-      select: { id: true, username: true, email: true, role: true, displayName: true, createdAt: true, lastLoginAt: true, mustChangePassword: true },
+      select: { id: true, username: true, email: true, role: true, displayName: true, avatar: true, bio: true, learningGoal: true, timezone: true, locale: true, level: true, createdAt: true, updatedAt: true, lastLoginAt: true, mustChangePassword: true, emailVerifiedAt: true, avatarUpdatedAt: true },
     });
     let emailNotice: "sent" | "skipped" | "failed" = "skipped";
     if (data.sendEmailNotify && user.email) {
       const mail = await sendAdminCreatedUserEmail({ to: user.email, username: user.username, initialPassword: data.initialPassword, userId: user.id });
       emailNotice = mail.ok ? "sent" : "failed";
     }
-    return NextResponse.json({ ok: true, user: { ...user, createdAt: user.createdAt.toISOString(), lastLoginAt: null }, emailNotice });
+    return NextResponse.json({ ok: true, user: serializeUser(user), emailNotice });
   } catch (error) {
     return handleApiError(error);
   }

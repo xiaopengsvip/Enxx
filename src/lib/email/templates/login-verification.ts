@@ -1,11 +1,12 @@
 import { codeBlock, paragraph, renderBaseEmail, type RenderedEmail } from "./base-template";
 
-export function renderLoginVerificationEmail({ code }: { code: string }): RenderedEmail & { subject: string } {
+export function renderLoginVerificationEmail({ code, logoUrl }: { code: string; logoUrl?: string }): RenderedEmail & { subject: string } {
   return {
-    subject: "ENXX 登录验证码",
+    subject: "🔑 ENXX 登录验证码",
     ...renderBaseEmail({
       title: "ENXX 登录验证码",
       preheader: "你正在登录 ENXX 英语自学网站，验证码 10 分钟内有效。",
+      logoUrl,
       content: [
         paragraph("你正在登录 ENXX English Self-Learning。"),
         paragraph("你的登录验证码是："),

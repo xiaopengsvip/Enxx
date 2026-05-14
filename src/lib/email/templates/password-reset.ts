@@ -1,11 +1,12 @@
 import { paragraph, renderBaseEmail, type RenderedEmail } from "./base-template";
 
-export function renderPasswordResetEmail({ resetUrl }: { resetUrl: string }): RenderedEmail & { subject: string } {
+export function renderPasswordResetEmail({ resetUrl, logoUrl }: { resetUrl: string; logoUrl?: string }): RenderedEmail & { subject: string } {
   return {
-    subject: "ENXX 重置密码",
+    subject: "🔒 ENXX 重置密码",
     ...renderBaseEmail({
       title: "ENXX 重置密码",
       preheader: "你正在申请重置 ENXX 密码，链接 30 分钟内有效。",
+      logoUrl,
       content: [
         paragraph("你正在申请重置密码。"),
         paragraph("点击下方按钮重置密码，链接 30 分钟内有效。"),

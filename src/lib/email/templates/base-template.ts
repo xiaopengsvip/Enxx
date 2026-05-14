@@ -11,15 +11,29 @@ export type BaseEmailInput = {
   actionLabel?: string;
   actionUrl?: string;
   footerNote?: string;
+  logoUrl?: string;
 };
+
+const DEFAULT_EMAIL_LOGO_URL = "https://enxx.allapple.top/icon-192.png";
 
 export function escapeHtml(value: string): string {
   return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function safeHttpsLogoUrl(value?: string): string {
+  if (!value) return DEFAULT_EMAIL_LOGO_URL;
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== "https:") return DEFAULT_EMAIL_LOGO_URL;
+    return parsed.toString();
+  } catch {
+    return DEFAULT_EMAIL_LOGO_URL;
+  }
 }
 
 export function paragraph(text: string): string {
@@ -30,9 +44,10 @@ export function codeBlock(code: string): string {
   return `<div style="margin:20px 0 22px;padding:20px 18px;border-radius:20px;background:linear-gradient(135deg,#e0f2fe 0%,#ede9fe 52%,#f5f3ff 100%);border:1px solid rgba(99,102,241,.18);box-shadow:inset 0 1px 0 rgba(255,255,255,.86);text-align:center;"><div style="font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:36px;line-height:1.1;font-weight:900;letter-spacing:8px;color:#1d4ed8;">${escapeHtml(code)}</div></div>`;
 }
 
-export function renderBaseEmail({ title, preheader, content, textContent, actionLabel, actionUrl, footerNote }: BaseEmailInput): RenderedEmail {
+export function renderBaseEmail({ title, preheader, content, textContent, actionLabel, actionUrl, footerNote, logoUrl }: BaseEmailInput): RenderedEmail {
   const safeTitle = escapeHtml(title);
   const safePreheader = escapeHtml(preheader);
+  const safeLogoUrl = escapeHtml(safeHttpsLogoUrl(logoUrl));
   const action = actionLabel && actionUrl
     ? `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:24px 0 10px;"><tr><td style="border-radius:999px;background:linear-gradient(90deg,#38bdf8,#2563eb,#8b5cf6);box-shadow:0 16px 40px rgba(37,99,235,.28);"><a href="${escapeHtml(actionUrl)}" style="display:inline-block;padding:13px 24px;border-radius:999px;color:#ffffff;text-decoration:none;font-weight:900;font-size:15px;">${escapeHtml(actionLabel)}</a></td></tr></table>`
     : "";
@@ -54,10 +69,15 @@ export function renderBaseEmail({ title, preheader, content, textContent, action
         <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="max-width:640px;width:100%;">
           <tr>
             <td style="padding:0 8px 18px;">
-              <div style="display:inline-block;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.72);box-shadow:0 18px 50px rgba(15,23,42,.10);backdrop-filter:blur(18px);">
-                <div style="font-size:18px;font-weight:900;letter-spacing:-.02em;color:#0f172a;">ENXX English Self-Learning</div>
-                <div style="margin-top:4px;font-size:12px;font-weight:800;color:#64748b;">英语自学网站 · AI English Learning OS · Liquid Glass</div>
-              </div>
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="display:inline-table;padding:10px 14px;border-radius:18px;background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.72);box-shadow:0 18px 50px rgba(15,23,42,.10);">
+                <tr>
+                  <td style="vertical-align:middle;padding-right:10px;"><img src="${safeLogoUrl}" width="42" height="42" alt="ENXX Logo" style="display:block;width:42px;height:42px;border-radius:14px;object-fit:cover;border:1px solid rgba(37,99,235,.14);"></td>
+                  <td style="vertical-align:middle;">
+                    <div style="font-size:18px;font-weight:900;letter-spacing:-.02em;color:#0f172a;">ENXX English Self-Learning</div>
+                    <div style="margin-top:4px;font-size:12px;font-weight:800;color:#64748b;">英语自学网站 · AI English Learning OS · Liquid Glass</div>
+                  </td>
+                </tr>
+              </table>
             </td>
           </tr>
           <tr>

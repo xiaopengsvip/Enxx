@@ -16,7 +16,7 @@ export async function GET(request: Request) {
       where: {
         ...(status ? { status } : {}),
         ...(type ? { type } : {}),
-        ...(keyword ? { OR: [{ to: { contains: keyword, mode: "insensitive" as const } }, { subject: { contains: keyword, mode: "insensitive" as const } }] } : {}),
+        ...(keyword ? { OR: [{ from: { contains: keyword, mode: "insensitive" as const } }, { to: { contains: keyword, mode: "insensitive" as const } }, { subject: { contains: keyword, mode: "insensitive" as const } }] } : {}),
       },
       orderBy: { createdAt: "desc" },
       take: 200,

@@ -16,8 +16,8 @@ ENXX 不只是背单词，而是通过：查词、听发音、学句型、拆句
 
 ## 当前版本
 
-- Version: `0.2.8-beta`
-- Updated: `2026-05-14`
+- Version: `0.3.0-beta`
+- Updated: `2026-05-15`
 - Developer: Everett / AI SYSTEMS
 - Developer Site: https://allapple.top/
 
@@ -82,10 +82,31 @@ ENXX 不只是背单词，而是通过：查词、听发音、学句型、拆句
 
 ```text
 username: adminenxx
+email: adminenxx@allapple.top
 initial password: enxx@allapple.top
 ```
 
 安全提醒：首次登录后请立即修改默认管理员密码；生产环境必须更换 `JWT_SECRET`。
+
+### 账号中心
+
+- `/account` 是正式账号中心，用户可以查看学习数据、修改资料、上传头像、修改密码。
+- 管理员账号会显示“管理员专区”和后台入口；普通用户看不到后台管理入口。
+- `/account/profile` 支持修改显示名称、邮箱、个人简介、学习目标、timezone 和 locale。
+- 头像上传支持 jpg、jpeg、png、webp，限制 2MB，保存到 `/uploads/avatars`。
+
+### 后台入口
+
+后台入口：`/admin`。后台模块包括：
+
+- 概览
+- 用户管理
+- 内容管理
+- 邮件中心
+- 学习数据
+- 系统设置
+
+后台使用独立 Admin Layout，管理员可管理用户、词库、语法、题库、邮件、学习数据和系统配置；普通用户不能访问后台页面和后台 API。
 
 ## 全局 AI 助手
 
@@ -110,10 +131,17 @@ ENXX 邮件系统支持：
 生产环境建议配置 SMTP：
 
 ```bash
-SMTP_HOST=""
-SMTP_PORT=""
-SMTP_USER=""
-SMTP_FROM="ENXX <no-reply@enxx.allapple.top>"
+SMTP_HOST="smtp.qq.com"
+SMTP_PORT="465"
+SMTP_SECURE="true"
+SMTP_USER="your@qq.com"
+SMTP_FROM="ENXX <your@qq.com>"
+EMAIL_FROM_NAME="ENXX"
+EMAIL_FROM_ADDRESS=""
+EMAIL_REPLY_TO="test@allapple.top"
+EMAIL_SENDING_DOMAIN="enxx.allapple.top"
+EMAIL_LOGO_URL="https://enxx.allapple.top/icon-192.png"
+SMTP_TEST_TO="test@allapple.top"
 ```
 
 敏感授权码只应写入服务器本地 `.env` 或后台 `SystemSetting` 加密项，不能写入 README、日志或代码仓库。
@@ -124,7 +152,18 @@ SMTP_FROM="ENXX <no-reply@enxx.allapple.top>"
 - 登录支持账号密码后邮箱验证码二次验证；验证通过后才写入登录 cookie。
 - 管理员可在 `/admin/settings/email` 配置 SMTP，后台配置保存到 `SystemSetting` 并优先于 `.env`。
 - `SMTP_PASS` 不会明文显示，也不会通过 API 返回前端；留空保存表示不修改旧授权码。
-- 邮件发送统一走 `getMailConfig()` 和 `sendMail()`，注册验证码、登录验证码、忘记密码、欢迎邮件和后台测试邮件共用同一配置。
+- `SMTP_USER` 是 SMTP 登录账号，`EMAIL_FROM_ADDRESS` 是邮件里显示的 From 地址，两者可以不同，但 SMTP 服务商可能要求 From 必须是已验证地址。
+- `EMAIL_FROM_ADDRESS` 留空时，系统使用 `SMTP_FROM`；如果要临时测试 `enxx@enxx.allapple.top`，请先确认 SMTP provider 支持自定义发件域。
+- 邮件发送统一走 `getMailConfig()`、`getMailFromConfig()` 和 `sendMail()`，注册验证码、登录验证码、忘记密码、欢迎邮件、系统通知和后台测试邮件共用同一配置。
+
+### Cloudflare Email Routing 注意事项
+
+- Cloudflare Email Routing 负责收信转发，不等于 SMTP 发信。
+- 测试 `enxx@enxx.allapple.top` 发信时，不要修改 `allapple.top` 主域 MX。
+- 推荐使用子域 `enxx.allapple.top` 配置独立发信认证。
+- 测试收件邮箱默认 `test@allapple.top`。
+- `lianxingtz@qq.com` 只作为 QQ SMTP 发件邮箱，不作为默认测试收件邮箱。
+- 如果要正式使用 `enxx@enxx.allapple.top` 发信，需要配置 SPF、DKIM、DMARC，并使用支持自定义发件域的 SMTP 服务商。
 
 ### 测试邮件默认收件邮箱
 
@@ -140,21 +179,25 @@ SMTP 测试命令：
 npm run test:smtp
 ```
 
-如果未指定 `--to`，系统默认发送测试邮件到 `test@allapple.top`。
+如果未指定 `--to`，系统按优先级解析测试邮箱，未配置时发送到 `test@allapple.top`。
 
-临时指定其他测试邮箱：
+临时指定其他测试邮箱或临时 From：
 
 ```bash
 npm run test:smtp -- --to=custom@example.com
+npm run test:smtp -- --from=enxx@enxx.allapple.top --to=test@allapple.top
 ```
 
-后台也可以在 `/admin/settings/email` 配置自定义测试接收邮箱。
+后台也可以在 `/admin/settings/email` 配置自定义测试接收邮箱，或在测试发送时传入临时 From。
 
 测试邮箱优先级：
 
 ```text
 命令行/请求传入 > 后台配置 > .env SMTP_TEST_TO > test@allapple.top
 ```
+
+注意：`lianxingtz@qq.com` 仅可作为 SMTP 发件邮箱示例或服务器发件配置，不作为默认测试收件邮箱。邮件主题不能嵌入图片图标；ENXX HTML 邮件正文顶部显示品牌 Logo。默认 Email Logo URL：`https://enxx.allapple.top/icon-192.png`，后台可在 `/admin/settings/email` 修改。收件箱列表 Logo 需要后续配置 BIMI。
+
 
 ## 技术栈
 
@@ -259,8 +302,8 @@ npm run db:generate
 npm run db:deploy
 npm run db:seed
 
-# 本次账号页面独立布局升级的开发迁移名（schema 已同步时可能不会生成新迁移）：
-npx prisma migrate dev --name auth_layout_and_smooth_auth_pages
+# 本次后台、账号资料、头像和邮件系统升级迁移名：
+npx prisma migrate dev --name admin_account_mail_upgrade
 ```
 
 seed 会创建默认管理员账号（用户名由 `ADMIN_USERNAME` 控制），首次登录必须修改默认密码。当前学习内容 seed 规模：304 个唯一单词、20 个句型、12 个场景、160 道练习题。

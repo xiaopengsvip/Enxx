@@ -42,6 +42,7 @@ export function AppShell({ children }: AppShellProps) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [me, setMe] = useState<Me | null>(null);
+  const isAdminRoute = pathname.startsWith("/admin");
 
   useEffect(() => {
     const stored = window.localStorage.getItem("enxx-theme");
@@ -61,6 +62,8 @@ export function AppShell({ children }: AppShellProps) {
       }
     }
     void loadMe();
+    window.addEventListener("enxx:user-updated", loadMe);
+    return () => window.removeEventListener("enxx:user-updated", loadMe);
   }, []);
 
   useEffect(() => {
@@ -143,28 +146,30 @@ export function AppShell({ children }: AppShellProps) {
         <DeveloperFooter />
       </div>
 
-      <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-50 rounded-[1.75rem] border border-white/55 bg-white/74 p-1.5 shadow-[0_18px_60px_rgba(15,23,42,.18)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/74 lg:hidden" aria-label="底部快捷导航">
-        <div className="grid grid-cols-5 gap-1">
-          {mobileNavItems.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                aria-current={active ? "page" : undefined}
-                className={cn(
-                  "flex h-12 flex-col items-center justify-center rounded-[1.25rem] px-1 text-[10px] font-black text-slate-500 transition active:scale-[0.98] dark:text-slate-400",
-                  active && "bg-gradient-to-br from-sky-400 to-violet-500 text-white shadow-[0_12px_28px_rgba(37,99,235,.28)]",
-                )}
-              >
-                <span className="text-xs leading-none">{item.icon}</span>
-                <span className="mt-1 leading-none">{item.zh}</span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-      <FloatingAiButton />
+      {!isAdminRoute ? (
+        <nav className="fixed inset-x-3 bottom-[calc(env(safe-area-inset-bottom)+0.75rem)] z-50 rounded-[1.75rem] border border-white/55 bg-white/74 p-1.5 shadow-[0_18px_60px_rgba(15,23,42,.18)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/74 lg:hidden" aria-label="底部快捷导航">
+          <div className="grid grid-cols-5 gap-1">
+            {mobileNavItems.map((item) => {
+              const active = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  aria-current={active ? "page" : undefined}
+                  className={cn(
+                    "flex h-12 flex-col items-center justify-center rounded-[1.25rem] px-1 text-[10px] font-black text-slate-500 transition active:scale-[0.98] dark:text-slate-400",
+                    active && "bg-gradient-to-br from-sky-400 to-violet-500 text-white shadow-[0_12px_28px_rgba(37,99,235,.28)]",
+                  )}
+                >
+                  <span className="text-xs leading-none">{item.icon}</span>
+                  <span className="mt-1 leading-none">{item.zh}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      ) : null}
+      {!isAdminRoute ? <FloatingAiButton /> : null}
     </div>
   );
 }

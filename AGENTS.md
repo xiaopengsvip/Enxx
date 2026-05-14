@@ -23,13 +23,13 @@ src/config/site.ts
 Current version:
 
 ```text
-0.2.8-beta
+0.3.0-beta
 ```
 
 Updated:
 
 ```text
-2026-05-14
+2026-05-15
 ```
 
 ## Role
@@ -79,8 +79,8 @@ pm2 logs enxx-english-self-learning
 - `src/app/(main)/review/page.tsx` - Review Plan page.
 - `src/app/(main)/alphabet/page.tsx` - Alphabet, phonics, and phonetic starter page.
 - `src/app/(main)/learn-path/page.tsx` - Zero-based learning path page.
-- `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`, `src/app/(main)/account/page.tsx` - Auth/account pages.
-- `src/app/(main)/notes/page.tsx`, `src/app/(main)/admin/page.tsx` - Database-backed notes/admin pages.
+- `src/app/(auth)/login/page.tsx`, `src/app/(auth)/register/page.tsx`, `src/app/(main)/account/page.tsx`, `src/app/(main)/account/profile/page.tsx` - Auth/account pages.
+- `src/app/(main)/notes/page.tsx`, `src/app/(admin)/admin/page.tsx`, `src/app/(admin)/admin/layout.tsx` - Database-backed notes/admin pages and independent Admin Layout.
 - `src/app/(main)/progress/page.tsx` - Progress page.
 - `src/app/(main)/mistakes/page.tsx` - Mistakes page.
 - `src/app/(main)/dictionary/page.tsx` - Dictionary 查词即学习页面。
@@ -206,6 +206,26 @@ Rules:
 54. 邮件日志不能记录验证码明文。
 55. 邮件日志不能记录 reset token 明文。
 56. 推送 GitHub 前必须检查 `.env` 和敏感信息。
+
+57. 默认管理员邮箱必须是 `adminenxx@allapple.top`。
+58. `/account` 页面必须根据 role 区分显示；管理员才显示后台入口，普通用户不得看到后台管理入口。
+59. `mustChangePassword` 提示必须根据 ADMIN / USER 区分文案。
+60. 头像上传必须限制文件类型和大小：jpg/jpeg/png/webp，最大 2MB，不允许 svg 或可执行文件。
+61. 用户只能修改自己的资料；管理员可以在后台查看和管理用户。
+62. `/api/auth/me` 必须返回 avatar、displayName、role、mustChangePassword。
+63. 上传头像或修改资料后必须刷新用户菜单。
+64. 后台必须使用独立 Admin Layout，不要放在普通 AppShell route group 中。
+65. 后台 API 必须 `requireAdmin`，后台不能返回 SMTP_PASS。
+66. 后台首页只展示概览，不要塞太多完整列表；字典词库完整管理放在 `/admin/dictionary`。
+67. 所有 HTML 邮件必须使用 base-template，顶部必须显示 ENXX 品牌 Logo。
+68. Email Logo URL 必须使用 HTTPS 绝对地址，不允许 javascript: 或 data: URL。
+69. `lianxingtz@qq.com` 只作为 SMTP 发件邮箱，不作为默认测试收件邮箱。
+70. 推送 GitHub 前必须检查 `.env`、真实密钥、node_modules、.next 和用户上传头像。
+71. Cloudflare Email Routing 只负责收信转发，不等于 SMTP 发信服务；测试发信时不能修改 `allapple.top` 主域 MX。
+72. 如需测试 `enxx@enxx.allapple.top` 发信，只允许通过临时 From 或子域 `enxx.allapple.top` 的发信服务商验证，不要默认切换生产 From。
+73. 自定义 From 必须走 `getMailFromConfig`，优先级为后台 `EMAIL_FROM_NAME` + `EMAIL_FROM_ADDRESS`、环境变量、`SMTP_FROM`、`ENXX <SMTP_USER>`。
+74. 后台测试发信和 `scripts/test-smtp.ts` 必须支持临时 `from`，但临时 From 不写入配置。
+75. EmailLog 可以记录安全的 `from`、`to`、`subject`、`status`、`error`、`messageId`，但不能记录 SMTP_PASS、验证码明文、reset token 明文。
 
 ## Learning system module rules
 

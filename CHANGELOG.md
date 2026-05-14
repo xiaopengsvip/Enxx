@@ -1,5 +1,35 @@
 # Changelog
 
+## 0.3.0-beta - 2026-05-15
+
+- 全新升级后台控制台 UI
+- 新增后台 Admin Layout
+- 后台功能分组为概览、用户管理、内容管理、邮件中心、学习数据、系统设置
+- 全新升级我的账号页面
+- 我的账号页面支持角色权限区分
+- 管理员账号提示与普通用户提示分离
+- 默认管理员邮箱改为 adminenxx@allapple.top
+- 新增用户头像上传能力
+- 新增用户资料设置页面
+- 新增账号安全中心
+- 账号中心与后台用户管理联动
+- 顶部用户菜单支持显示头像、显示名、角色
+- 后台用户管理支持查看用户资料、重置密码、标记强制改密
+- 后台邮件配置支持自定义测试接收邮箱
+- 所有测试邮件默认接收邮箱统一为 test@allapple.top
+- lianxingtz@qq.com 仅作为 SMTP 发件邮箱，不作为默认测试收件邮箱
+- 新增 getTestEmailRecipient 统一测试收件邮箱解析逻辑
+- 邮件模板顶部增加 ENXX 品牌图标
+- 邮件主题统一 ENXX 品牌前缀
+- 后台邮件配置支持 Email Logo URL
+- 优化邮件模板预览
+- 优化后台移动端适配
+- 邮件配置扩展 `EMAIL_FROM_NAME`、`EMAIL_FROM_ADDRESS`、`EMAIL_REPLY_TO`、`EMAIL_SENDING_DOMAIN`，支持自定义显示 From 和 Reply-To。
+- SMTP 测试脚本支持 `--from`、`--reply-to`、`--subject`；临时 From 不写入后台配置或 `.env`。
+- 后台测试发信支持临时 From，并在 EmailLog 中记录安全的 from/to/subject/status/error/messageId。
+- README 和 AGENTS 增加 Cloudflare Email Routing 保护说明：测试 `enxx@enxx.allapple.top` 发信时不修改 `allapple.top` 主域 MX。
+- `EmailLog` 新增可选 `from` 字段，继续禁止记录 SMTP_PASS、验证码明文和 reset token 明文。
+
 ## 0.2.8-beta - 2026-05-14
 
 - 修复注册页发送验证码后没有验证码输入框的问题

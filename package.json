@@ -1,6 +1,6 @@
 {
   "name": "enxx-english-self-learning",
-  "version": "0.2.8-beta",
+  "version": "0.3.0-beta",
   "private": true,
   "description": "ENXX English Self-Learning / ENXX 英语自学网站 - an English self-learning website for zero-based learners.",
   "scripts": {
@@ -29,6 +29,7 @@
     "prisma": "^6.19.3",
     "react": "19.2.6",
     "react-dom": "19.2.6",
+    "sharp": "^0.34.5",
     "zod": "^4.4.3",
     "zustand": "5.0.13"
   },

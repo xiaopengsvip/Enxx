@@ -1,11 +1,12 @@
 import { paragraph, renderBaseEmail, type RenderedEmail } from "./base-template";
 
-export function renderAdminCreatedUserEmail({ username, initialPassword, loginUrl = "https://enxx.allapple.top/login" }: { username: string; initialPassword: string; loginUrl?: string }): RenderedEmail & { subject: string } {
+export function renderAdminCreatedUserEmail({ username, initialPassword, loginUrl = "https://enxx.allapple.top/login", logoUrl }: { username: string; initialPassword: string; loginUrl?: string; logoUrl?: string }): RenderedEmail & { subject: string } {
   return {
-    subject: "你的 ENXX 账号已创建",
+    subject: "👤 你的 ENXX 账号已创建",
     ...renderBaseEmail({
       title: "你的 ENXX 账号已创建",
       preheader: "管理员已为你创建 ENXX 账号，首次登录后请立即修改密码。",
+      logoUrl,
       content: [
         paragraph("管理员已为你创建 ENXX 账号。"),
         paragraph(`用户名：${username}`),

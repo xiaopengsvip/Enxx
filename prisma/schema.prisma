@@ -60,8 +60,14 @@ model User {
   role                   UserRole                @default(USER)
   displayName            String?
   avatar                 String?
+  bio                    String?
+  learningGoal           String?
+  timezone               String?
+  locale                 String?
   level                  Int                     @default(0)
   mustChangePassword     Boolean                 @default(false)
+  emailVerifiedAt        DateTime?
+  avatarUpdatedAt        DateTime?
   createdAt              DateTime                @default(now())
   updatedAt              DateTime                @updatedAt
   lastLoginAt            DateTime?
@@ -306,6 +312,7 @@ model LoginTicket {
 
 model EmailLog {
   id        String   @id @default(cuid())
+  from      String?
   to        String
   subject   String
   type      String

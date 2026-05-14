@@ -1,11 +1,12 @@
 import { paragraph, renderBaseEmail, type RenderedEmail } from "./base-template";
 
-export function renderWelcomeEmail({ username, startUrl = "https://enxx.allapple.top/daily-plan" }: { username?: string; startUrl?: string }): RenderedEmail & { subject: string } {
+export function renderWelcomeEmail({ username, startUrl = "https://enxx.allapple.top/daily-plan", logoUrl }: { username?: string; startUrl?: string; logoUrl?: string }): RenderedEmail & { subject: string } {
   return {
-    subject: "欢迎加入 ENXX 英语自学网站",
+    subject: "🎉 欢迎加入 ENXX",
     ...renderBaseEmail({
       title: "欢迎加入 ENXX",
       preheader: "你的 ENXX 账号已创建成功，今天可以从 10 分钟学习计划开始。",
+      logoUrl,
       content: [
         paragraph(`欢迎加入 ENXX${username ? `，${username}` : ""}。`),
         paragraph("你的账号已创建成功。"),

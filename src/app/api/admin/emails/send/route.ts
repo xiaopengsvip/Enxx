@@ -16,6 +16,7 @@ const schema = z.object({
   content: z.string().min(1, "请输入邮件正文").max(5000),
   actionLabel: z.string().optional().nullable(),
   actionUrl: z.string().url().optional().nullable(),
+  addBrandPrefix: z.boolean().optional().default(true),
 });
 
 export async function POST(request: Request) {
@@ -36,7 +37,8 @@ export async function POST(request: Request) {
     const errors: string[] = [];
     for (const user of users) {
       if (!user.email) { skippedCount += 1; continue; }
-      const mail = await sendNotificationEmail({ to: user.email, title: data.title || data.subject, content: data.content, actionLabel: data.actionLabel ?? undefined, actionUrl: data.actionUrl ?? undefined, userId: user.id });
+      const subject = data.addBrandPrefix && !data.subject.includes("ENXX") ? `📢 ENXX ${data.subject}` : data.subject;
+      const mail = await sendNotificationEmail({ to: user.email, subject, title: data.title || data.subject, content: data.content, actionLabel: data.actionLabel ?? undefined, actionUrl: data.actionUrl ?? undefined, userId: user.id });
       if (mail.ok) successCount += 1;
       else { failedCount += 1; if (errors.length < 5) errors.push(mail.error ?? mail.reason); }
     }

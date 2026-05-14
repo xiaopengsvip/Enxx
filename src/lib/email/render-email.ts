@@ -26,20 +26,21 @@ export const emailTemplateCatalog: Array<{ key: EmailTemplateKey; name: string; 
 ];
 
 export function renderEmailTemplate(key: EmailTemplateKey | string, data: Record<string, string | undefined>): RenderedTemplateEmail {
+  const logoUrl = data.logoUrl;
   switch (key) {
     case "register_verification":
-      return renderRegisterVerificationEmail({ code: data.code ?? "123456" });
+      return renderRegisterVerificationEmail({ code: data.code ?? "123456", logoUrl });
     case "login_verification":
-      return renderLoginVerificationEmail({ code: data.code ?? "123456" });
+      return renderLoginVerificationEmail({ code: data.code ?? "123456", logoUrl });
     case "password_reset":
-      return renderPasswordResetEmail({ resetUrl: data.resetUrl ?? "https://enxx.allapple.top/reset-password?token=example" });
+      return renderPasswordResetEmail({ resetUrl: data.resetUrl ?? "https://enxx.allapple.top/reset-password?token=preview-token", logoUrl });
     case "welcome":
-      return renderWelcomeEmail({ username: data.username ?? "learner", startUrl: data.startUrl });
+      return renderWelcomeEmail({ username: data.username ?? "learner", startUrl: data.startUrl, logoUrl });
     case "notification":
-      return renderNotificationEmail({ title: data.title ?? "学习提醒", content: data.content ?? "今天记得完成 10 分钟学习计划。", actionLabel: data.actionLabel ?? "开始学习", actionUrl: data.actionUrl ?? "https://enxx.allapple.top/daily-plan" });
+      return renderNotificationEmail({ title: data.title ?? "学习提醒", content: data.content ?? "今天记得完成 10 分钟学习计划。", actionLabel: data.actionLabel ?? "开始学习", actionUrl: data.actionUrl ?? "https://enxx.allapple.top/daily-plan", logoUrl });
     case "admin_created_user":
-      return renderAdminCreatedUserEmail({ username: data.username ?? "newuser", initialPassword: data.initialPassword ?? "password123", loginUrl: data.loginUrl });
+      return renderAdminCreatedUserEmail({ username: data.username ?? "newuser", initialPassword: data.initialPassword ?? "password123", loginUrl: data.loginUrl, logoUrl });
     default:
-      return renderNotificationEmail({ title: "ENXX 系统通知", content: "未知模板，已使用系统通知预览。" });
+      return renderNotificationEmail({ title: "ENXX 系统通知", content: "未知模板，已使用系统通知预览。", logoUrl });
   }
 }

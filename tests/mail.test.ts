@@ -1,9 +1,9 @@
 import { strict as assert } from "node:assert";
 import { test } from "node:test";
-import { buildMailConfig, decryptSettingValue, encryptSettingValue, getTestEmailRecipient } from "../src/lib/mail-config";
+import { buildMailConfig, decryptSettingValue, encryptSettingValue, getMailFromConfig, getTestEmailRecipient } from "../src/lib/mail-config";
 import { getSmtpConfig, isSmtpConfigured, sendMail } from "../src/lib/mail";
 
-const SMTP_KEYS = ["SMTP_HOST", "SMTP_PORT", "SMTP_SECURE", "SMTP_USER", "SMTP_PASS", "SMTP_FROM", "SMTP_TEST_TO", "DATABASE_URL"] as const;
+const SMTP_KEYS = ["SMTP_HOST", "SMTP_PORT", "SMTP_SECURE", "SMTP_USER", "SMTP_PASS", "SMTP_FROM", "SMTP_TEST_TO", "EMAIL_FROM_NAME", "EMAIL_FROM_ADDRESS", "EMAIL_REPLY_TO", "EMAIL_SENDING_DOMAIN", "EMAIL_LOGO_URL", "DATABASE_URL"] as const;
 
 type SmtpEnv = Partial<Record<(typeof SMTP_KEYS)[number], string>>;
 
@@ -49,7 +49,7 @@ test("SMTP config requires host, port, user and pass, while FROM falls back to u
       assert.equal(config.host, "smtp.qq.com");
       assert.equal(config.port, 465);
       assert.equal(config.secure, true);
-      assert.equal(config.from, "learner@qq.com");
+      assert.equal(config.from, "ENXX <learner@qq.com>");
       assert.equal(config.source, "env");
     },
   );
@@ -111,4 +111,27 @@ test("test email recipient prefers explicit input then SMTP_TEST_TO env", async 
     assert.equal(await getTestEmailRecipient("custom@example.com"), "custom@example.com");
     assert.equal(await getTestEmailRecipient(), "env-test@allapple.top");
   });
+});
+
+test("mail from config prefers EMAIL_FROM_ADDRESS and keeps reply-to separate from SMTP login", async () => {
+  await withSmtpEnv(
+    {
+      SMTP_HOST: "smtp.qq.com",
+      SMTP_PORT: "465",
+      SMTP_USER: "login@qq.com",
+      SMTP_PASS: "dummy-secret",
+      SMTP_FROM: "ENXX <login@qq.com>",
+      EMAIL_FROM_NAME: "ENXX",
+      EMAIL_FROM_ADDRESS: "enxx@enxx.allapple.top",
+      EMAIL_REPLY_TO: "test@allapple.top",
+      EMAIL_SENDING_DOMAIN: "enxx.allapple.top",
+    },
+    async () => {
+      const from = await getMailFromConfig();
+      assert.equal(from.from, "ENXX <enxx@enxx.allapple.top>");
+      assert.equal(from.replyTo, "test@allapple.top");
+      assert.equal(from.sendingDomain, "enxx.allapple.top");
+      assert.equal(from.source, "env");
+    },
+  );
 });

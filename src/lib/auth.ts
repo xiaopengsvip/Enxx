@@ -22,8 +22,14 @@ export type SafeUser = {
   role: UserRole;
   displayName: string | null;
   avatar: string | null;
+  bio: string | null;
+  learningGoal: string | null;
+  timezone: string | null;
+  locale: string | null;
   level: number;
   mustChangePassword: boolean;
+  emailVerifiedAt: Date | null;
+  avatarUpdatedAt: Date | null;
   createdAt: Date;
   lastLoginAt: Date | null;
 };
@@ -81,6 +87,8 @@ export function publicUser(user: SafeUser) {
     ...user,
     createdAt: user.createdAt.toISOString(),
     lastLoginAt: user.lastLoginAt ? user.lastLoginAt.toISOString() : null,
+    emailVerifiedAt: user.emailVerifiedAt ? user.emailVerifiedAt.toISOString() : null,
+    avatarUpdatedAt: user.avatarUpdatedAt ? user.avatarUpdatedAt.toISOString() : null,
   };
 }
 
@@ -106,8 +114,14 @@ export async function getCurrentUser(): Promise<SafeUser | null> {
       role: true,
       displayName: true,
       avatar: true,
+      bio: true,
+      learningGoal: true,
+      timezone: true,
+      locale: true,
       level: true,
       mustChangePassword: true,
+      emailVerifiedAt: true,
+      avatarUpdatedAt: true,
       createdAt: true,
       lastLoginAt: true,
     },

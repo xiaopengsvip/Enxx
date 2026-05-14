@@ -41,13 +41,14 @@ function enrichWord(word: Prisma.WordCreateInput): Prisma.WordCreateInput {
 
 async function main() {
   const adminUsername = process.env.ADMIN_USERNAME ?? "adminenxx";
-  const adminPassword = process.env.ADMIN_INITIAL_PASSWORD ?? "enxx@allapple.top";
+  const adminPassword = process.env.ADMIN_INITIAL_PASSWORD ?? "please-change-admin-password";
+  const adminEmail = process.env.ADMIN_EMAIL ?? "adminenxx@allapple.top";
   const existingAdmin = await prisma.user.findUnique({ where: { username: adminUsername } });
   if (!existingAdmin) {
     await prisma.user.create({
       data: {
         username: adminUsername,
-        email: "admin@enxx.local",
+        email: adminEmail,
         passwordHash: await hashPassword(adminPassword),
         role: "ADMIN",
         displayName: "ENXX Admin",
@@ -56,8 +57,12 @@ async function main() {
     });
     console.log("Default admin account created.");
   } else {
-    if (existingAdmin.role !== "ADMIN") {
-      await prisma.user.update({ where: { id: existingAdmin.id }, data: { role: "ADMIN" } });
+    const updateData: Prisma.UserUpdateInput = {};
+    if (existingAdmin.role !== "ADMIN") updateData.role = "ADMIN";
+    if (!existingAdmin.email || existingAdmin.email === "admin@enxx.local") updateData.email = adminEmail;
+    if (!existingAdmin.displayName) updateData.displayName = "ENXX Admin";
+    if (Object.keys(updateData).length > 0) {
+      await prisma.user.update({ where: { id: existingAdmin.id }, data: updateData });
     }
     console.log("Default admin account already exists.");
   }

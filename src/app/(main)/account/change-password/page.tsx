@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, type FormEvent } from "react";
 import { PasswordInput } from "@/components/auth/password-input";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -16,6 +16,17 @@ export default function ChangePasswordPage() {
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [role, setRole] = useState<"ADMIN" | "USER" | null>(null);
+  const [mustChangePassword, setMustChangePassword] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/auth/me").then((res) => res.ok ? res.json() : null).then((data) => {
+      if (data?.user) {
+        setRole(data.user.role);
+        setMustChangePassword(Boolean(data.user.mustChangePassword));
+      }
+    }).catch(() => undefined);
+  }, []);
 
   function update(key: keyof FormState, value: string) {
     setForm((current) => ({ ...current, [key]: value }));
@@ -47,6 +58,7 @@ export default function ChangePasswordPage() {
         return;
       }
       setMessage("密码已修改，即将进入账号中心。");
+      window.dispatchEvent(new Event("enxx:user-updated"));
       router.refresh();
       window.setTimeout(() => router.push("/account"), 700);
     } catch {
@@ -61,7 +73,9 @@ export default function ChangePasswordPage() {
       <Card className="space-y-5">
         <Badge>Security</Badge>
         <h1 className="text-3xl font-black">修改密码</h1>
-        <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">默认管理员首次登录必须修改初始化密码。新密码至少 8 位。</p>
+        <p className="text-sm leading-6 text-slate-600 dark:text-slate-300">
+          {mustChangePassword && role === "ADMIN" ? "管理员首次登录需要立即修改默认密码。当前账号拥有后台权限，请设置强密码。" : mustChangePassword ? "该账号可能由管理员创建，请先修改初始密码后继续使用学习功能。" : "新密码至少 8 位。建议使用不重复的强密码。"}
+        </p>
         <form onSubmit={submit} className="space-y-4">
           <PasswordInput id="currentPassword" name="currentPassword" label="当前密码" placeholder="请输入当前密码" value={form.currentPassword} onChange={(value) => update("currentPassword", value)} error={fieldErrors.currentPassword} autoComplete="current-password" />
           <PasswordInput id="newPassword" name="newPassword" label="新密码" placeholder="请输入新密码，至少 8 位" value={form.newPassword} onChange={(value) => update("newPassword", value)} error={fieldErrors.newPassword} autoComplete="new-password" />
