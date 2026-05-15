@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="学习日志" description="查看学习记录、今日学习用户和学习时长数据入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="学习日志" status="beta" description="查看用户学习记录、每日学习时长和学习行为。" plans={['用户/日期筛选', '学习时长统计', '完成情况', '学习内容明细']} />;
 }

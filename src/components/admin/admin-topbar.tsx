@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { getAdminBreadcrumb, getAdminSection } from "@/config/admin-nav";
 import { Button } from "@/components/ui/Button";
-import { getAdminBreadcrumb } from "@/components/admin/admin-sidebar";
 
 export type AdminTopbarUser = { username: string; displayName?: string | null; avatar?: string | null; role: "ADMIN" | "USER" };
 
@@ -12,14 +12,15 @@ export function AdminTopbar({ user, pathname, onLogout, onOpenMenu }: { user: Ad
   const label = user.displayName || user.username;
   const initial = label.slice(0, 1).toUpperCase();
   const breadcrumb = getAdminBreadcrumb(pathname);
+  const section = getAdminSection(pathname);
 
   return (
-    <header className="admin-topbar sticky top-0 z-50 border-b border-white/55 bg-white/72 px-4 py-3 shadow-[0_10px_34px_rgba(15,23,42,.07)] backdrop-blur-2xl dark:border-white/10 dark:bg-slate-950/70 sm:px-6 lg:px-8">
-      <div className="mx-auto flex w-full max-w-[1360px] items-center justify-between gap-4">
+    <header className="admin-topbar sticky top-0 z-50 border-b border-white/55 bg-white/74 px-4 py-3 shadow-[0_10px_34px_rgba(15,23,42,.07)] backdrop-blur-2xl supports-[backdrop-filter]:bg-white/68 dark:border-white/10 dark:bg-slate-950/76 dark:supports-[backdrop-filter]:bg-slate-950/68 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <button type="button" className="liquid-chip inline-flex h-10 w-10 items-center justify-center rounded-2xl font-black lg:hidden" onClick={onOpenMenu} aria-label="打开后台导航">☰</button>
           <div className="min-w-0">
-            <p className="truncate text-xs font-black uppercase tracking-[0.18em] text-slate-400">Admin Console</p>
+            <p className="truncate text-[11px] font-black uppercase tracking-[0.2em] text-slate-400">ADMIN / {section}</p>
             <p className="mt-0.5 truncate text-sm font-black text-slate-700 dark:text-slate-200">{breadcrumb}</p>
           </div>
         </div>

@@ -20,15 +20,17 @@ export function AdminShell({ user, children }: { user: AdminShellUser; children:
   }
 
   return (
-    <div className="admin-layout-shell min-h-screen text-slate-950 dark:text-white lg:pl-[304px]">
-      <AdminSidebar pathname={pathname} className="hidden lg:fixed lg:bottom-4 lg:left-4 lg:top-4 lg:z-40 lg:flex lg:w-[280px]" />
-      <div className="admin-main flex min-h-screen min-w-0 flex-col">
+    <div className="admin-layout-shell min-h-screen text-slate-950 dark:text-white lg:h-screen lg:overflow-hidden lg:pl-[322px]">
+      <AdminSidebar pathname={pathname} className="hidden lg:fixed lg:bottom-4 lg:left-4 lg:top-4 lg:z-40 lg:flex lg:w-[290px]" />
+      <div className="admin-main flex min-h-screen min-w-0 flex-col lg:h-screen lg:overflow-x-hidden lg:overflow-y-auto">
         <AdminTopbar user={user} pathname={pathname} onLogout={logout} onOpenMenu={() => setDrawerOpen(true)} />
         <AdminContentContainer>{children}</AdminContentContainer>
       </div>
       {drawerOpen ? (
         <div className="fixed inset-0 z-[90] bg-slate-950/38 backdrop-blur-sm lg:hidden" onClick={() => setDrawerOpen(false)}>
-          <AdminSidebar pathname={pathname} onNavigate={() => setDrawerOpen(false)} className="h-full w-[86vw] max-w-sm rounded-none border-l-0 border-y-0 bg-white/92 shadow-2xl dark:bg-slate-950/94" />
+          <div className="h-full" onClick={(event) => event.stopPropagation()}>
+            <AdminSidebar pathname={pathname} onNavigate={() => setDrawerOpen(false)} className="h-full w-[86vw] max-w-sm rounded-none border-l-0 border-y-0 bg-white/92 shadow-2xl dark:bg-slate-950/94" />
+          </div>
         </div>
       ) : null}
     </div>

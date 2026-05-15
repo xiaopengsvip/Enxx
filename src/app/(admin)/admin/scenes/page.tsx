@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="场景管理" description="场景词汇、句子和对话内容管理入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="场景管理" status="beta" description="管理生活场景英语内容，例如酒店、机场、餐厅、购物、问路、电话等。" plans={['场景词汇', '常用表达', '场景对话', '按 Level 管理']} />;
 }

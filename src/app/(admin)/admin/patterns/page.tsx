@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="句型管理" description="句型公式、例句和拆解内容管理入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="句型管理" status="beta" description="管理句型模板、例句、中文解释和练习题。" plans={['句型模板', '例句库', '中文解释', '关联练习题']} />;
 }

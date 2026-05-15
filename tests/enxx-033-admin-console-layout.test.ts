@@ -6,11 +6,11 @@ function read(path: string) {
   return readFileSync(path, "utf8");
 }
 
-test("0.3.3-beta admin console layout version and docs are synchronized", () => {
+test("0.3.4-beta admin console layout version and docs are synchronized", () => {
   for (const file of ["src/config/site.ts", "package.json", "README.md", "AGENTS.md", "CHANGELOG.md"]) {
-    assert.ok(read(file).includes("0.3.3-beta"), `${file} should mention 0.3.3-beta`);
+    assert.ok(read(file).includes("0.3.4-beta"), `${file} should mention 0.3.4-beta`);
   }
-  assert.ok(read("CHANGELOG.md").includes("## 0.3.3-beta - 2026-05-15"));
+  assert.ok(read("CHANGELOG.md").includes("## 0.3.4-beta - 2026-05-15"));
 });
 
 test("admin console exposes reusable standard layout components", () => {

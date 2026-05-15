@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.4-beta - 2026-05-15
+
+- 精修后台 Sidebar：品牌区缩小为两行以内，菜单区独立滚动，底部状态统一为一行 `System Online · v0.3.4-beta`。
+- 新增 `src/config/releases.ts`、`AdminVersionPopover` 与 `SidebarFooterStatus`，版本浮窗展示 GitHub 仓库、CHANGELOG 链接和最近版本记录。
+- Topbar 升级为右侧内容区 Sticky 顶部栏，只显示后台路径和全局操作，避免与 PageHeader 重复标题。
+- 右侧内容容器升级为 1440px SaaS Admin 主容器，后台主内容区域独立滚动。
+- 统一 Sidebar 菜单状态、Stats Card 和 Badge 视觉体系，减少数据库模型字段名在后台界面中的暴露。
+- `/admin` 保留后台首页 Hero，其余子页面继续使用标准 PageHeader。
+
 ## 0.3.3-beta - 2026-05-15
 
 - 后台管理系统升级为专业 Admin Console 布局：固定左侧 Sidebar、全局 Admin Topbar、统一右侧内容容器。

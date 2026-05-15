@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="笔记数据" description="查看用户学习笔记数据入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="用户笔记" status="beta" description="查看用户学习笔记。" plans={['用户笔记列表', '内容摘要', '关联单词/语法', '创建时间筛选']} />;
 }

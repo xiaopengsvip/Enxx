@@ -23,7 +23,7 @@ src/config/site.ts
 Current version:
 
 ```text
-0.3.3-beta
+0.3.4-beta
 ```
 
 Updated:
@@ -285,6 +285,17 @@ npm run db:seed
 The seed script creates the default admin from `ADMIN_USERNAME` / `ADMIN_INITIAL_PASSWORD` and marks `mustChangePassword=true`. Do not remove the localStorage fallback: logged-out users should still be able to learn, and protected API routes should return JSON 401/403 instead of unhandled 500 errors.
 
 
+## 0.3.4-beta SaaS Admin Console rules
+
+1. Sidebar PC 端固定为独立玻璃容器，品牌区高度控制在 84px-104px，文案最多两行：`ENXX Admin Console` + `用户、内容、邮件与学习数据`。
+2. Sidebar 只有菜单区域滚动，顶部品牌区和底部 `System Online · v<version>` 状态区固定；底部状态必须是一行并打开版本浮窗。
+3. 版本浮窗数据来自 `src/config/releases.ts`，不要在客户端直接读取 `CHANGELOG.md`。
+4. Topbar 只覆盖右侧内容区并保持 sticky；Topbar 只显示 `ADMIN / <section>` 和当前模块，不渲染大标题或长描述。
+5. 右侧内容统一使用 `AdminContentContainer`，最大宽度约 1440px，内容在 Topbar 下方滚动。
+6. 后台 badge 统一走 `AdminStatusBadge`；Sidebar 菜单状态使用 Beta、开发中、规划中、Online、Healthy、Default、可用等统一标签。
+7. Stats Card 和表格文案必须使用业务友好命名：学习日志、句型数据、练习题库、复习项、错题记录，不直接展示 Prisma/数据库模型名。
+8. 保留登录、邮件、Provider、LoginLog、头像上传和账号中心能力；不要提交 `.env` 或真实密钥。
+
 ## 0.3.3-beta Admin Console layout rules
 
 1. 后台必须使用标准 Admin Console 结构：固定 Sidebar + 全局 Topbar + AdminContentContainer + 页面唯一 AdminPageHeader。
@@ -327,3 +338,17 @@ The seed script creates the default admin from `ADMIN_USERNAME` / `ADMIN_INITIAL
 27. 未验证通道不能开放为默认发信通道。
 28. 维护中/开发中/规划中的通道不能设为默认。
 29. 所有 Provider 测试默认收件人必须是 test@allapple.top。
+
+
+## 0.3.4-beta Admin Sidebar navigation rules
+
+1. 侧边栏功能入口必须配置在 `src/config/admin-nav.ts`。
+2. 侧边栏入口不能 404。
+3. 未完成功能必须显示 `AdminComingSoon`。
+4. 所有后台页面必须通过 `(admin)/admin/layout.tsx` 的 `requireAdmin` / `getCurrentUser` 管理员校验。
+5. Badge 状态必须统一使用 `AdminStatusBadge`。
+6. 不允许重复页面标题；每个页面只保留一个主 PageHeader 或 AdminComingSoon 标题。
+7. 不允许数据库字段名直接暴露给用户，需使用中文友好标签。
+8. 侧边栏顶部最多两行：`ENXX Admin Console` 和 `用户、内容、邮件与学习数据`。
+9. 侧边栏底部只保留一行版本状态：`System Online · v当前版本`。
+10. 新增后台入口时必须同步新增页面路由、状态、说明和测试。

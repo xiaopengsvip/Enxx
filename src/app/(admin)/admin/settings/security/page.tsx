@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="安全设置" description="密码策略、登录验证码和管理员安全配置入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="安全设置" status="planned" description="后续管理登录策略、验证码策略、密码策略、IP 限制等。" plans={['登录策略', '验证码策略', '密码策略', 'IP 限制']} />;
 }

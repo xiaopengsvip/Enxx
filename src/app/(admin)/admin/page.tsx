@@ -84,7 +84,8 @@ export default function AdminPage() {
       <AdminPageHeader
         badge="Admin Console"
         title="学习系统后台"
-        description="统一管理用户、词库、语法、题库、邮件、学习数据和系统配置。"
+        description="统一管理用户、内容、邮件、学习数据与系统配置。"
+        variant="hero"
         actions={<><Link href="/admin/users/create"><Button>新增用户</Button></Link><Link href="/admin/dictionary"><Button variant="secondary">新增单词</Button></Link><Link href="/admin/emails/send"><Button variant="secondary">发送邮件</Button></Link><Link href="/admin/settings/email"><Button variant="secondary">邮件配置</Button></Link></>}
       />
 
@@ -92,17 +93,17 @@ export default function AdminPage() {
         <AdminStatCard title="用户总数" value={stats?.userCount ?? "—"} description="全部学习账号" icon="U" href="/admin/users" status="用户与学习" />
         <AdminStatCard title="今日注册" value={stats?.todayRegisterCount ?? "—"} description="今日新增账号" icon="+" href="/admin/users" status="Today" />
         <AdminStatCard title="今日学习用户" value={stats?.todayActiveUserCount ?? "—"} description="今日有学习日志的用户" icon="↗" href="/admin/study-logs" />
-        <AdminStatCard title="今日学习日志" value={stats?.todayStudyLogCount ?? "—"} description="DailyStudyLog" icon="D" href="/admin/study-logs" />
-        <AdminStatCard title="字典词条" value={stats?.wordCount ?? "—"} description="Word 数据表" icon="W" href="/admin/dictionary" status="内容" />
+        <AdminStatCard title="今日学习日志" value={stats?.todayStudyLogCount ?? "—"} description="学习日志记录" icon="D" href="/admin/study-logs" />
+        <AdminStatCard title="字典词条" value={stats?.wordCount ?? "—"} description="词库内容" icon="W" href="/admin/dictionary" status="内容" />
         <AdminStatCard title="语法点" value={stats?.grammarCount ?? "—"} description="语法路线内容" icon="G" href="/admin/grammar" />
-        <AdminStatCard title="句型" value={stats?.patternCount ?? "—"} description="SentencePattern" icon="P" href="/admin/patterns" />
-        <AdminStatCard title="场景" value={stats?.sceneCount ?? "—"} description="Scene" icon="S" href="/admin/scenes" />
-        <AdminStatCard title="练习题" value={stats?.questionCount ?? "—"} description="PracticeQuestion" icon="Q" href="/admin/questions" />
+        <AdminStatCard title="句型" value={stats?.patternCount ?? "—"} description="句型数据" icon="P" href="/admin/patterns" />
+        <AdminStatCard title="场景" value={stats?.sceneCount ?? "—"} description="场景英语" icon="S" href="/admin/scenes" />
+        <AdminStatCard title="练习题" value={stats?.questionCount ?? "—"} description="练习题库" icon="Q" href="/admin/questions" />
         <AdminStatCard title="笔记" value={stats?.noteCount ?? "—"} description="用户学习笔记" icon="N" href="/admin/notes" status="用户数据" />
-        <AdminStatCard title="错题" value={stats?.mistakeCount ?? "—"} description="Mistake" icon="M" href="/admin/mistakes" />
-        <AdminStatCard title="复习项" value={stats?.reviewCount ?? "—"} description="ReviewItem" icon="R" href="/admin/reviews" />
+        <AdminStatCard title="错题" value={stats?.mistakeCount ?? "—"} description="错题记录" icon="M" href="/admin/mistakes" />
+        <AdminStatCard title="复习项" value={stats?.reviewCount ?? "—"} description="复习计划项" icon="R" href="/admin/reviews" />
         <AdminStatCard title="邮件日志" value={stats?.emailLogCount ?? "—"} description={`今日 ${stats?.todayEmailCount ?? "—"} 封`} icon="L" href="/admin/email-logs" />
-        <AdminStatCard title="管理员数量" value={stats?.adminCount ?? "—"} description="ADMIN 账号" icon="A" href="/admin/users" status="系统" />
+        <AdminStatCard title="管理员数量" value={stats?.adminCount ?? "—"} description="管理员账号" icon="A" href="/admin/users" status="系统" />
         <AdminStatCard title="邮件服务" value={stats?.smtpConfigured ? "正常" : "未配置"} description={`来源：${stats?.smtpSource ?? "none"}`} icon="@" href="/admin/settings/email" />
         <AdminStatCard title="当前版本" value={stats?.version ?? "0.3.0-beta"} description="ENXX 发布版本" icon="V" href="/admin/system" />
       </AdminStatsRow>

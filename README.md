@@ -16,7 +16,7 @@ ENXX 不只是背单词，而是通过：查词、听发音、学句型、拆句
 
 ## 当前版本
 
-- Version: `0.3.3-beta`
+- Version: `0.3.4-beta`
 - Updated: `2026-05-15`
 - Developer: Everett / AI SYSTEMS
 - Developer Site: https://allapple.top/
@@ -427,6 +427,12 @@ AI_MODEL=gpt-4o-mini
 - 主题 key：`enxx-theme`
 
 
+## 0.3.4-beta SaaS Admin Console 精修
+
+后台继续升级为成熟 SaaS Admin Console：Sidebar 品牌区缩小为两行以内，菜单区独立滚动，底部状态统一为一行 `System Online · v0.3.4-beta`；点击状态可打开版本浮窗，展示当前版本、更新时间、GitHub 仓库、CHANGELOG 链接和最近版本更新记录。
+
+Topbar 改为右侧内容区 Sticky 顶部栏，只显示后台路径和全局操作，不重复页面主标题。右侧主内容统一 `max-width: 1440px` 容器、规范 section 间距、统一 AdminStatusBadge / AdminStatCard / TableCard 视觉层级，避免在后台界面直接展示数据库模型字段名。移动端继续使用 Drawer Sidebar 和固定 Topbar。
+
 ## 0.3.3-beta 后台系统化重设计
 
 后台管理系统升级为标准 Admin Console 结构：固定左侧 Sidebar、全局 Admin Topbar、统一 `AdminContentContainer`、唯一 `AdminPageHeader`、标准 Toolbar、StatsRow、TableCard 与 SectionCard。`/admin/users` 已作为标准后台内容页模板重构，移除重复标题，统一搜索筛选、统计卡、表格字段命名、空状态和分页区域。
@@ -460,3 +466,19 @@ npm run check:mail-dns -- --domain=enxx.allapple.top
 ```
 
 通道状态说明：可用、未配置、测试失败、开发中、维护中、规划中。
+
+
+## 0.3.4-beta 后台侧边栏功能体系
+
+ENXX 后台侧边栏统一为 6 个一级分组、36 个功能入口，所有入口都配置在 `src/config/admin-nav.ts`，由 `AdminSidebar` 统一读取渲染。未完成模块统一使用 `AdminComingSoon` 显示开发中、规划中或维护中状态，不允许点击后出现 404。
+
+### 侧边栏分组
+
+1. 概览：后台首页、系统状态。
+2. 用户管理：用户列表、新增用户、账号安全、登录记录、管理员账号、角色权限。
+3. 内容管理：单词词库、字典词库、字母管理、音标管理、句型管理、语法内容、场景管理、题库管理、听力内容、AI Tutor 内容。
+4. 邮件中心：邮件通道、邮件配置、发送邮件、邮件模板、邮件日志、验证码记录。
+5. 学习数据：学习日志、用户笔记、错题数据、复习数据、学习统计、徽章成就。
+6. 系统设置：基础设置、安全设置、测试工具、版本更新、系统日志、数据备份。
+
+后台状态 Badge 统一复用 `AdminStatusBadge`：可用、Beta、开发中、规划中、维护中。页面标题遵循单一 PageHeader 规则，避免 Hero、Topbar 和内容区域重复显示同一个标题。

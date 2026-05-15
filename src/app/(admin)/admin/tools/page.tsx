@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="测试工具" description="SMTP、账号、词库和学习数据测试工具集合入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="测试工具" status="developing" description="后续提供 SMTP 测试、DNS 检查、Provider 测试、AI 接口测试等工具入口。" plans={['SMTP 测试', 'DNS 检查', 'Provider 测试', 'AI 接口测试']} />;
 }

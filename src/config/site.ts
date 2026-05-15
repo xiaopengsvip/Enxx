@@ -11,7 +11,7 @@ export const siteConfig = {
   developerName: "Everett",
   developerBrand: "AI SYSTEMS",
   developerSite: "https://allapple.top/",
-  version: "0.3.3-beta",
+  version: "0.3.4-beta",
   updatedAt: "2026-05-15",
   emailLogoUrl: "https://enxx.allapple.top/icon-192.png",
 };

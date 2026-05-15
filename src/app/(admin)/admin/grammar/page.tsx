@@ -1,5 +1,5 @@
-import { AdminPlaceholder } from "@/components/admin/admin-placeholder";
+import { AdminComingSoon } from "@/components/admin/admin-coming-soon";
 
 export default function Page() {
-  return <AdminPlaceholder title="语法内容" description="0-15 Level 语法路线和语法点内容管理入口。" primaryHref="/admin" />;
+  return <AdminComingSoon title="语法内容" status="beta" description="管理 0-15 Level 语法课程内容。" plans={['Level 0-15 课程列表', '例句与练习', '常见错误', '内容编辑与发布']} />;
 }

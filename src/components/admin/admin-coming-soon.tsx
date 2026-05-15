@@ -1,7 +1,24 @@
 import Link from "next/link";
-import { Card } from "@/components/ui/Card";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminSectionCard } from "@/components/admin/admin-section-card";
+import { AdminStatusBadge } from "@/components/admin/admin-status-badge";
 import { Button } from "@/components/ui/Button";
 
-export function AdminComingSoon({ title, status = "开发中", description, stats, plans = [] }: { title: string; status?: "Beta" | "开发中" | "规划中" | "维护中"; description: string; stats?: Array<{ label: string; value: string | number }>; plans?: string[] }) {
-  return <div className="space-y-6"><Card className="space-y-5"><div className="flex flex-wrap items-start justify-between gap-4"><div><span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-black text-sky-700 dark:bg-sky-400/15 dark:text-sky-100">{status}</span><h1 className="mt-4 text-4xl font-black tracking-[-0.05em]">{title}</h1><p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-slate-500 dark:text-slate-300">{description}</p></div><Link href="/admin"><Button>返回后台</Button></Link></div>{stats?.length ? <div className="grid gap-3 sm:grid-cols-3">{stats.map((item) => <div key={item.label} className="rounded-2xl bg-white/55 p-4 dark:bg-white/8"><p className="text-xs font-black text-slate-400">{item.label}</p><p className="mt-2 text-2xl font-black">{item.value}</p></div>)}</div> : null}{plans.length ? <div><p className="text-sm font-black">规划功能</p><ul className="mt-2 grid gap-2 text-sm font-semibold text-slate-500 dark:text-slate-300">{plans.map((item) => <li key={item} className="rounded-2xl bg-white/55 px-4 py-3 dark:bg-white/8">{item}</li>)}</ul></div> : null}</Card></div>;
+export function AdminComingSoon({ title, status = "developing", description, stats, plans = [] }: { title: string; status?: "ready" | "beta" | "developing" | "planned" | "maintenance" | "Beta" | "开发中" | "规划中" | "维护中"; description: string; stats?: Array<{ label: string; value: string | number }>; plans?: string[] }) {
+  return (
+    <div className="space-y-6">
+      <AdminPageHeader
+        badge="Admin Module"
+        title={title}
+        description={description}
+        actions={<><AdminStatusBadge status={status} /><Link href="/admin"><Button>返回后台</Button></Link></>}
+      />
+      {(stats?.length || plans.length) ? (
+        <AdminSectionCard title="模块规划" description="该模块入口已接入统一 Sidebar，后续按产品优先级逐步完善。">
+          {stats?.length ? <div className="grid gap-3 sm:grid-cols-3">{stats.map((item) => <div key={item.label} className="rounded-2xl bg-white/55 p-4 dark:bg-white/8"><p className="text-xs font-black text-slate-400">{item.label}</p><p className="mt-2 text-2xl font-black">{item.value}</p></div>)}</div> : null}
+          {plans.length ? <div className="mt-4"><p className="text-sm font-black">规划功能</p><ul className="mt-2 grid gap-2 text-sm font-semibold text-slate-500 dark:text-slate-300">{plans.map((item) => <li key={item} className="rounded-2xl bg-white/55 px-4 py-3 dark:bg-white/8">{item}</li>)}</ul></div> : null}
+        </AdminSectionCard>
+      ) : null}
+    </div>
+  );
 }
