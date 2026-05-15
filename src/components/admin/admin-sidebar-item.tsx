@@ -5,12 +5,13 @@ import { getAdminNavStatusLabel } from "@/config/admin-nav";
 import { cn } from "@/lib/utils";
 
 export function AdminSidebarItem({ item, active, onNavigate }: { item: AdminNavItem; active: boolean; onNavigate?: () => void }) {
-  const badge = item.badge ?? (item.status === "ready" ? null : getAdminNavStatusLabel(item.status));
+  const badge = item.status === "ready" ? null : getAdminNavStatusLabel(item.status);
 
   return (
     <Link
       href={item.href}
       onClick={onNavigate}
+      title={item.description}
       className={cn(
         "group flex min-h-11 items-center gap-3 rounded-[1rem] px-3 py-2 text-sm font-black text-slate-600 transition duration-200 hover:bg-white/78 hover:text-sky-700 dark:text-slate-300 dark:hover:bg-white/10 dark:hover:text-sky-100",
         active && "bg-sky-50 text-sky-700 shadow-[inset_3px_0_0_rgba(14,165,233,.95),0_14px_30px_rgba(37,99,235,.12)] dark:bg-sky-400/12 dark:text-sky-100",

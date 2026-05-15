@@ -6,7 +6,6 @@ export type AdminNavItem = {
   icon: string;
   status: AdminNavStatus;
   description: string;
-  badge?: "Beta" | "开发中" | "规划中" | "维护中" | "Online" | "Healthy" | "Default" | "可用";
 };
 
 export type AdminNavGroup = {
@@ -18,8 +17,8 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     title: "概览",
     items: [
-      { href: "/admin", label: "后台首页", icon: "⌂", status: "ready", badge: "Online", description: "后台总览页面，展示用户、内容、邮件、学习数据和系统状态。" },
-      { href: "/admin/system", label: "系统状态", icon: "◇", status: "beta", badge: "Healthy", description: "展示系统健康状态、数据库连接、版本、API 健康检查和邮件服务状态。" },
+      { href: "/admin", label: "后台首页", icon: "⌂", status: "ready", description: "后台总览页面，展示用户、内容、邮件、学习数据和系统状态。" },
+      { href: "/admin/system", label: "系统状态", icon: "◇", status: "beta", description: "展示系统健康状态、数据库连接、版本、API 健康检查和邮件服务状态。" },
     ],
   },
   {
@@ -37,7 +36,7 @@ export const adminNavGroups: AdminNavGroup[] = [
     title: "内容管理",
     items: [
       { href: "/admin/words", label: "单词词库", icon: "W", status: "beta", description: "管理单词学习内容；当前单词内容统一由字典词库管理。" },
-      { href: "/admin/dictionary", label: "字典词库", icon: "D", status: "beta", badge: "可用", description: "管理字典词条、音标、释义、例句、短语、难度和频率。" },
+      { href: "/admin/dictionary", label: "字典词库", icon: "D", status: "beta", description: "管理字典词条、音标、释义、例句、短语、难度和频率。" },
       { href: "/admin/letters", label: "字母管理", icon: "Aa", status: "developing", description: "管理 26 个英文字母大小写、发音、例词和练习内容。" },
       { href: "/admin/phonetics", label: "音标管理", icon: "音", status: "developing", description: "管理英语音标、发音示例、口型说明、音频和练习。" },
       { href: "/admin/patterns", label: "句型管理", icon: "P", status: "beta", description: "管理句型模板、例句、中文解释和练习题。" },
@@ -51,7 +50,7 @@ export const adminNavGroups: AdminNavGroup[] = [
   {
     title: "邮件中心",
     items: [
-      { href: "/admin/settings/mail-providers", label: "邮件通道", icon: "@", status: "beta", badge: "Default", description: "管理 QQ SMTP、自建 SMTP、Google SMTP、Resend、Brevo、Mailgun、Amazon SES、SendGrid、Postmark 等邮件 Provider 通道。" },
+      { href: "/admin/settings/mail-providers", label: "邮件通道", icon: "@", status: "beta", description: "管理 QQ SMTP、自建 SMTP、Google SMTP、Resend、Brevo、Mailgun、Amazon SES、SendGrid、Postmark 等邮件 Provider 通道。" },
       { href: "/admin/settings/email", label: "邮件配置", icon: "SMTP", status: "ready", description: "配置基础 SMTP、默认测试邮箱、邮件 Logo、发件名称等。" },
       { href: "/admin/emails/send", label: "发送邮件", icon: "✉", status: "beta", description: "给单个用户、多选用户、指定角色或全部用户发送系统通知邮件。" },
       { href: "/admin/emails/templates", label: "邮件模板", icon: "T", status: "beta", description: "预览注册验证码、登录验证码、重置密码、欢迎邮件、更换邮箱、系统通知等模板。" },
