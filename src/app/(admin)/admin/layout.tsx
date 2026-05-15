@@ -24,12 +24,12 @@ export default async function AdminLayout({ children }: { children: ReactNode })
     );
   }
   return (
-    <div className="relative min-h-screen overflow-x-hidden px-3 py-3 text-slate-950 dark:text-white sm:px-5 lg:px-8">
-      <div className="pointer-events-none fixed left-[7%] top-[16%] h-52 w-52 rounded-full bg-sky-300/28 blur-3xl dark:bg-sky-500/18" />
-      <div className="pointer-events-none fixed right-[8%] top-[4%] h-64 w-64 rounded-full bg-violet-300/28 blur-3xl dark:bg-violet-500/18" />
-      <div className="pointer-events-none fixed bottom-[10%] left-[42%] h-56 w-56 rounded-full bg-teal-300/18 blur-3xl dark:bg-teal-500/12" />
-      <div className="pointer-events-none fixed inset-0 opacity-45 [background-image:linear-gradient(rgba(56,189,248,.10)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,.10)_1px,transparent_1px)] [background-size:38px_38px] [mask-image:radial-gradient(circle_at_center,black_0%,transparent_78%)]" />
-      <div className="relative mx-auto w-full max-w-[1440px]">
+    <div className="relative min-h-screen overflow-x-hidden text-slate-950 dark:text-white">
+      <div className="pointer-events-none fixed left-[7%] top-[16%] h-52 w-52 rounded-full bg-sky-300/24 blur-3xl dark:bg-sky-500/16" />
+      <div className="pointer-events-none fixed right-[8%] top-[4%] h-64 w-64 rounded-full bg-violet-300/24 blur-3xl dark:bg-violet-500/16" />
+      <div className="pointer-events-none fixed bottom-[10%] left-[42%] h-56 w-56 rounded-full bg-teal-300/16 blur-3xl dark:bg-teal-500/10" />
+      <div className="pointer-events-none fixed inset-0 opacity-40 [background-image:linear-gradient(rgba(56,189,248,.10)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,.10)_1px,transparent_1px)] [background-size:38px_38px] [mask-image:radial-gradient(circle_at_center,black_0%,transparent_78%)]" />
+      <div className="relative">
         <AdminShell user={{ username: user.username, displayName: user.displayName, avatar: user.avatar, role: user.role }}>{children}</AdminShell>
       </div>
     </div>

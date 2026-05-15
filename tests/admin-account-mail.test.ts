@@ -7,12 +7,12 @@ function read(path: string) {
   return readFileSync(path, "utf8");
 }
 
-test("0.3.2-beta version and documentation are synchronized", () => {
+test("0.3.3-beta version and documentation are synchronized", () => {
   for (const file of ["src/config/site.ts", "package.json", "README.md", "AGENTS.md", "CHANGELOG.md"]) {
-    assert.ok(read(file).includes("0.3.2-beta"), `${file} should mention 0.3.2-beta`);
+    assert.ok(read(file).includes("0.3.3-beta"), `${file} should mention 0.3.3-beta`);
   }
   assert.ok(read("src/config/site.ts").includes('updatedAt: "2026-05-15"'));
-  assert.ok(read("CHANGELOG.md").includes("## 0.3.2-beta - 2026-05-15"));
+  assert.ok(read("CHANGELOG.md").includes("## 0.3.3-beta - 2026-05-15"));
 });
 
 test("admin console uses its own route group and is not wrapped by normal AppShell", () => {
@@ -27,12 +27,18 @@ test("admin console uses its own route group and is not wrapped by normal AppShe
 
 test("admin shell exposes required grouped navigation and header actions", () => {
   const shell = read("src/components/admin/admin-shell.tsx");
-  for (const label of ["概览", "用户管理", "内容管理", "邮件中心", "学习数据", "系统设置", "返回前台", "退出登录"]) {
-    assert.ok(shell.includes(label), `missing admin shell label: ${label}`);
+  const sidebar = read("src/components/admin/admin-sidebar.tsx");
+  const topbar = read("src/components/admin/admin-topbar.tsx");
+  for (const label of ["概览", "用户管理", "内容管理", "邮件中心", "学习数据", "系统设置"]) {
+    assert.ok(sidebar.includes(label), `missing admin sidebar label: ${label}`);
+  }
+  for (const label of ["返回前台", "退出登录"]) {
+    assert.ok(topbar.includes(label), `missing admin topbar label: ${label}`);
   }
   for (const href of ["/admin/users/create", "/admin/dictionary", "/admin/emails/send", "/admin/settings/email", "/admin/email-logs"]) {
-    assert.ok(shell.includes(href), `missing admin nav href: ${href}`);
+    assert.ok(sidebar.includes(href), `missing admin nav href: ${href}`);
   }
+  assert.ok(shell.includes("AdminSidebar"));
 });
 
 test("account center supports role-specific UI, profile editing and avatar upload", () => {

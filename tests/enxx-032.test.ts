@@ -6,11 +6,11 @@ function read(path: string) {
   return readFileSync(path, "utf8");
 }
 
-test("0.3.2-beta version, changelog and provider docs are synchronized", () => {
+test("0.3.3-beta version, changelog and provider docs are synchronized", () => {
   for (const file of ["src/config/site.ts", "package.json", "README.md", "AGENTS.md", "CHANGELOG.md"]) {
-    assert.ok(read(file).includes("0.3.2-beta"), `${file} should mention 0.3.2-beta`);
+    assert.ok(read(file).includes("0.3.3-beta"), `${file} should mention 0.3.3-beta`);
   }
-  assert.ok(read("CHANGELOG.md").includes("## 0.3.2-beta - 2026-05-15"));
+  assert.ok(read("CHANGELOG.md").includes("## 0.3.3-beta - 2026-05-15"));
   assert.ok(read(".env.example").includes('MAIL_PROVIDER="qq_smtp"'));
   assert.ok(read(".env.example").includes('SMTP_TEST_TO="test@allapple.top"'));
   assert.ok(read(".env.example").includes("SETTINGS_ENCRYPTION_KEY"));
@@ -58,11 +58,11 @@ test("account profile supports avatar upload, verified change email and login hi
 });
 
 test("admin sidebar entries have pages or explicit status and login logs/provider pages exist", () => {
-  const shell = read("src/components/admin/admin-shell.tsx");
+  const sidebar = read("src/components/admin/admin-sidebar.tsx");
   for (const href of ["/admin/login-logs", "/admin/settings/mail-providers", "/admin/words", "/admin/grammar", "/admin/patterns", "/admin/scenes", "/admin/questions", "/admin/study-logs", "/admin/notes", "/admin/mistakes", "/admin/reviews"]) {
-    assert.ok(shell.includes(href), `sidebar missing ${href}`);
+    assert.ok(sidebar.includes(href), `sidebar missing ${href}`);
   }
-  assert.ok(shell.includes("Beta") || shell.includes("开发中") || shell.includes("规划中") || shell.includes("维护中"));
+  assert.ok(sidebar.includes("Beta") || sidebar.includes("开发中") || sidebar.includes("规划中") || sidebar.includes("维护中"));
   for (const file of ["src/app/(admin)/admin/login-logs/page.tsx", "src/app/(admin)/admin/settings/mail-providers/page.tsx", "src/components/admin/admin-coming-soon.tsx"]) {
     assert.equal(existsSync(file), true, `${file} should exist`);
   }

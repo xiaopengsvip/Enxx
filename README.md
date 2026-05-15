@@ -16,7 +16,7 @@ ENXX 不只是背单词，而是通过：查词、听发音、学句型、拆句
 
 ## 当前版本
 
-- Version: `0.3.2-beta`
+- Version: `0.3.3-beta`
 - Updated: `2026-05-15`
 - Developer: Everett / AI SYSTEMS
 - Developer Site: https://allapple.top/
@@ -426,6 +426,12 @@ AI_MODEL=gpt-4o-mini
 - localStorage key：`enxx-learning-progress-v1`
 - 主题 key：`enxx-theme`
 
+
+## 0.3.3-beta 后台系统化重设计
+
+后台管理系统升级为标准 Admin Console 结构：固定左侧 Sidebar、全局 Admin Topbar、统一 `AdminContentContainer`、唯一 `AdminPageHeader`、标准 Toolbar、StatsRow、TableCard 与 SectionCard。`/admin/users` 已作为标准后台内容页模板重构，移除重复标题，统一搜索筛选、统计卡、表格字段命名、空状态和分页区域。
+
+设计规范：保持 Liquid Glass + 蓝紫科技风，但减少展示页式 Hero 与重复大标题；Topbar 只承担全局操作和路径提示，PageHeader 作为页面唯一主标题区；右侧内容统一 `max-width: 1360px` 容器，PC 固定侧边栏，移动端抽屉导航。
 
 ## 0.3.2-beta 后台、登录安全与邮件通道
 

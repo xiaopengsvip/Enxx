@@ -23,7 +23,7 @@ src/config/site.ts
 Current version:
 
 ```text
-0.3.2-beta
+0.3.3-beta
 ```
 
 Updated:
@@ -284,6 +284,17 @@ npm run db:seed
 
 The seed script creates the default admin from `ADMIN_USERNAME` / `ADMIN_INITIAL_PASSWORD` and marks `mustChangePassword=true`. Do not remove the localStorage fallback: logged-out users should still be able to learn, and protected API routes should return JSON 401/403 instead of unhandled 500 errors.
 
+
+## 0.3.3-beta Admin Console layout rules
+
+1. 后台必须使用标准 Admin Console 结构：固定 Sidebar + 全局 Topbar + AdminContentContainer + 页面唯一 AdminPageHeader。
+2. Topbar 只做全局操作栏和当前位置提示，不渲染页面主标题或长描述。
+3. 每个后台页面只允许一个页面主标题区；禁止 Hero 标题和内容标题重复。
+4. 右侧内容必须放入统一 `AdminContentContainer`，最大宽度约 1360px，统一 padding 和 section 间距。
+5. `/admin/users` 是标准后台内容页模板：PageHeader、StatsRow、Toolbar、TableCard、EmptyState、分页区域。
+6. 表格字段展示必须用户友好，不直接暴露数据库字段名；例如 `mustChangePassword` 显示为“首次改密”，`createdAt` 显示为“创建时间”。
+7. 新后台页面优先复用 `src/components/admin/admin-*` 通用组件，不要每页重复手写一套壳和标题。
+8. Sidebar PC 端固定，移动端抽屉化；Topbar 保持稳定悬浮，用户菜单包含我的账号、后台首页、修改密码和退出登录。
 
 ## 0.3.2-beta Admin / LoginLog / Mail Provider rules
 

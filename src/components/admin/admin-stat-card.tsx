@@ -1,7 +1,5 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 import { Card } from "@/components/ui/Card";
-import { cn } from "@/lib/utils";
 
 export function AdminStatCard({ title, value, description, icon, href, status }: { title: string; value: string | number; description: string; icon: string; href?: string; status?: string }) {
   const content = (
@@ -20,16 +18,4 @@ export function AdminStatCard({ title, value, description, icon, href, status }:
     </Card>
   );
   return href ? <Link href={href}>{content}</Link> : content;
-}
-
-export function AdminSectionCard({ title, description, children, className }: { title: string; description?: string; children: ReactNode; className?: string }) {
-  return (
-    <Card className={cn("space-y-4 rounded-[1.5rem] p-5", className)}>
-      <div>
-        <h2 className="text-2xl font-black tracking-[-0.04em]">{title}</h2>
-        {description ? <p className="mt-1 text-sm font-semibold leading-6 text-slate-500 dark:text-slate-300">{description}</p> : null}
-      </div>
-      {children}
-    </Card>
-  );
 }

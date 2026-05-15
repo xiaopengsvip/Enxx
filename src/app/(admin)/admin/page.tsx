@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { AdminSectionCard, AdminStatCard } from "@/components/admin/admin-stat-card";
-import { Badge } from "@/components/ui/Badge";
+import { AdminPageHeader } from "@/components/admin/admin-page-header";
+import { AdminSectionCard } from "@/components/admin/admin-section-card";
+import { AdminStatsRow } from "@/components/admin/admin-stats-row";
+import { AdminStatCard } from "@/components/admin/admin-stat-card";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 
@@ -79,23 +81,14 @@ export default function AdminPage() {
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[2rem] border border-white/60 bg-gradient-to-br from-sky-100/80 via-white/72 to-violet-100/78 p-6 shadow-[0_28px_90px_rgba(37,99,235,.14)] backdrop-blur-2xl dark:border-white/10 dark:from-sky-950/50 dark:via-slate-950/68 dark:to-violet-950/46">
-        <div className="relative z-10 flex flex-wrap items-end justify-between gap-5">
-          <div>
-            <Badge>Admin Console</Badge>
-            <h1 className="mt-4 text-4xl font-black tracking-[-0.06em] sm:text-5xl">学习系统后台</h1>
-            <p className="mt-3 max-w-3xl text-sm font-semibold leading-7 text-slate-600 dark:text-slate-300">统一管理用户、词库、语法、题库、邮件、学习数据和系统配置。</p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/admin/users/create"><Button>新增用户</Button></Link>
-            <Link href="/admin/dictionary"><Button variant="secondary">新增单词</Button></Link>
-            <Link href="/admin/emails/send"><Button variant="secondary">发送邮件</Button></Link>
-            <Link href="/admin/settings/email"><Button variant="secondary">邮件配置</Button></Link>
-          </div>
-        </div>
-      </section>
+      <AdminPageHeader
+        badge="Admin Console"
+        title="学习系统后台"
+        description="统一管理用户、词库、语法、题库、邮件、学习数据和系统配置。"
+        actions={<><Link href="/admin/users/create"><Button>新增用户</Button></Link><Link href="/admin/dictionary"><Button variant="secondary">新增单词</Button></Link><Link href="/admin/emails/send"><Button variant="secondary">发送邮件</Button></Link><Link href="/admin/settings/email"><Button variant="secondary">邮件配置</Button></Link></>}
+      />
 
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
+      <AdminStatsRow className="sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5">
         <AdminStatCard title="用户总数" value={stats?.userCount ?? "—"} description="全部学习账号" icon="U" href="/admin/users" status="用户与学习" />
         <AdminStatCard title="今日注册" value={stats?.todayRegisterCount ?? "—"} description="今日新增账号" icon="+" href="/admin/users" status="Today" />
         <AdminStatCard title="今日学习用户" value={stats?.todayActiveUserCount ?? "—"} description="今日有学习日志的用户" icon="↗" href="/admin/study-logs" />
@@ -112,7 +105,7 @@ export default function AdminPage() {
         <AdminStatCard title="管理员数量" value={stats?.adminCount ?? "—"} description="ADMIN 账号" icon="A" href="/admin/users" status="系统" />
         <AdminStatCard title="邮件服务" value={stats?.smtpConfigured ? "正常" : "未配置"} description={`来源：${stats?.smtpSource ?? "none"}`} icon="@" href="/admin/settings/email" />
         <AdminStatCard title="当前版本" value={stats?.version ?? "0.3.0-beta"} description="ENXX 发布版本" icon="V" href="/admin/system" />
-      </div>
+      </AdminStatsRow>
 
       <AdminSectionCard title="今日数据快照" description="快速观察注册、学习和邮件服务的今日状态。">
         <div className="grid gap-3 md:grid-cols-4">

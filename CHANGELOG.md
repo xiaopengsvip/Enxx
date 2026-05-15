@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.3-beta - 2026-05-15
+
+- 后台管理系统升级为专业 Admin Console 布局：固定左侧 Sidebar、全局 Admin Topbar、统一右侧内容容器。
+- 新增后台通用组件：AdminSidebar、AdminTopbar、AdminContentContainer、AdminPageHeader、AdminStatsRow、AdminToolbar、AdminTableCard、AdminFilterBar、AdminEmptyState、AdminStatusBadge、AdminSectionCard。
+- `/admin/users` 重构为标准后台内容页模板：唯一 PageHeader、统计卡、规整筛选栏、统一玻璃 TableCard、空状态和分页区域。
+- 修复后台页面标题重复问题，Topbar 不再承担页面主标题职责。
+- 用户表格字段改为更友好的展示命名：显示名称、首次改密、创建时间等。
+- `/admin`、`/admin/login-logs`、`/admin/dictionary`、`/admin/email-logs`、`/admin/settings/mail-providers` 接入统一后台页面组件。
+
 ## 0.3.2-beta - 2026-05-15
 
 - 规范化升级后台 Admin Console 页面结构
